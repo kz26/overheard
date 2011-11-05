@@ -1,0 +1,208 @@
+{% load static %}
+
+<!doctype html>
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en"> <![endif]-->
+<!-- Consider adding an manifest.appcache: h5bp.com/d/Offline -->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+
+  <!-- Use the .htaccess and remove these lines to avoid edge case issues.
+       More info: h5bp.com/b/378 -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <title></title>
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!-- Mobile viewport optimized: j.mp/bplateviewport -->
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+
+  <!-- Place favicon.ico and apple-touch-icon.png in the root directory: mathiasbynens.be/notes/touch-icons -->
+
+  <!-- CSS: implied media=all -->
+  <!-- CSS concatenated and minified via ant build script-->
+  <link rel="stylesheet" href="{{ STATIC_URL }}css/style.css">
+  <link rel="stylesheet" href="{{ STATIC_URL }}css/960.css">
+  <link rel="stylesheet" href="{{ STATIC_URL }}css/text.css">
+  <link rel="stylesheet" href="{{ STATIC_URL }}css/reset.css">
+  <link rel="stylesheet" href="{{ STATIC_URL }}css/custom.css">
+  <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/mint-choc/jquery-ui.css">
+
+  <!-- end CSS-->
+
+  <!-- More ideas for your <head> here: h5bp.com/d/head-Tips -->
+
+  <!-- All JavaScript at the bottom, except for Modernizr / Respond.
+       Modernizr enables HTML5 elements & feature detects; Respond is a polyfill for min/max-width CSS3 Media Queries
+       For optimal performance, use a custom Modernizr build: www.modernizr.com/download/ -->
+   <!-- Grab Google CDN's jQuery, with a protocol relative URL; fall back to local if offline -->
+
+  <script src="{{ STATIC_URL }}js/libs/modernizr-2.0.6.min.js"></script>
+</head>
+
+<body>
+
+<header>
+<div class="container_12">
+    <div class="prefix_8 grid_4">
+    {% if user.is_authenticated %}
+        <p class="floatright">Welcome, {{ user.get_full_name }}!</p>
+    {% else %}
+        <div class="fb-login-button floatright"></div>
+    {% endif %}
+    </div>
+    <div class="grid_12">
+        <h1 id="header_logo">OverHeardBy.Me</h1>
+    </div>
+    <div class="prefix_1 grid_11">
+        <h2 id="header_school" class="greenlink">@<a href="#">UChicago</a><h2>
+</div>
+</header>
+
+<div id="submitbox" class="container_12">
+    <form>
+    <div class="grid_12">
+        <div class="grid_6 alpha">
+        <label>The Where</label>
+        <textarea rows="4" cols="40"></textarea>
+        </div>
+        <div class="grid_6 omega">
+        <label class="floatright">The What</label>
+        <textarea class="floatright" rows="4" cols="40"></textarea>
+        </div>
+    </div>
+
+    <div class="grid_12">
+    </div>
+        <div class="grid_6 alpha">
+        <img id="img-upload-button" title="Upload an image" src="{{STATIC_URL}}img/icons/camera.png" />
+        <img id="img-delete" src="{{STATIC_URL}}img/icons/x.png" title="Delete upload" style="display: none;" />
+        <span id="img-upload-module" style="display: none;">
+        <p class="bold">Upload an image from your computer. (png, jpg, gif, max. 2MB)</p>
+        <input id="img-upload-field" type="file" />
+        <span id="img-preview-wrapper"></span>
+        </span>
+        </div>
+        <div class="grid_6 omega">
+        <input type="submit" class="submitbtn" value="Submit!" />
+        </div>
+    </form>
+</div>
+
+  <div id="fb-root"></div>
+
+  <!-- JavaScript at the bottom for fast page loading -->
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+  <script>window.jQuery || document.write('<script src="{{ STATIC_URL }}js/libs/jquery-1.6.2.min.js"><\/script>')</script>
+  <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
+  <script src="{{ STATIC_URL }}js/libs/ICanHaz.min.js"></script>
+  <script src="{{ STATIC_URL }}js/libs/outerHTML-1.0.0-min.js"></script>
+
+
+  <!-- scripts concatenated and minified via ant build script-->
+  <script defer src="{{ STATIC_URL }}js/plugins.js"></script>
+  <script defer src="{{ STATIC_URL }}js/script.js"></script>
+  <!-- end scripts-->
+
+	
+  <!-- Change UA-XXXXX-X to be your site's ID -->
+  <script>
+    window._gaq = [['_setAccount','UAXXXXXXXX1'],['_trackPageview'],['_trackPageLoadTime']];
+    Modernizr.load({
+      load: ('https:' == location.protocol ? '//ssl' : '//www') + '.google-analytics.com/ga.js'
+    });
+  </script>
+
+
+  <!-- Prompt IE 6 users to install Chrome Frame. Remove this if you want to support IE 6.
+       chromium.org/developers/how-tos/chrome-frame-getting-started -->
+  <!--[if lt IE 7 ]>
+    <script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
+    <script>window.attachEvent('onload',function(){CFInstall.check({mode:'overlay'})})</script>
+  <![endif]-->
+
+<script>
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '{{ fb_app_id }}', // App ID
+      channelURL : 'http://{{ site_domain }}/channel.html', // Channel File
+      status     : true, // check login status
+      cookie     : true, // enable cookies to allow the server to access the session
+      oauth      : true, // enable OAuth 2.0
+      xfbml      : true  // parse XFBML
+    });
+
+    // Additional initialization code here
+    FB.Event.subscribe('auth.login', function(response) {
+        var redirect_uri = '/login?token=' + response.authResponse.accessToken;
+        window.location = redirect_uri;
+    });
+  };
+
+  // Load the SDK Asynchronously
+  (function(d){
+     var js, id = 'facebook-jssdk'; if (d.getElementById(id)) {return;}
+     js = d.createElement('script'); js.id = id; js.async = true;
+     js.src = "//connect.facebook.net/en_US/all.js";
+     d.getElementsByTagName('head')[0].appendChild(js);
+   }(document));
+</script>
+
+<script>
+$(document).ready(function() {
+
+    function scaleToSquare(img, maxside) {
+        width = img.width;
+        height = img.height;
+        if(width <= maxside && height <= maxside)
+            return;
+        ratio = Math.max(width, height) / maxside;
+        return [Math.round(width / ratio), Math.round(height / ratio)];
+
+    }
+
+    function readURL(input, previewfield) {
+        if(input.files && input.files[0]) {
+            $('#img-delete').show();
+            var imageType = /image.*/;
+            if(!input.files[0].type.match(imageType)) {
+                alert("Invalid file type!");
+                return;
+            }
+            var img = document.createElement("img");
+
+            var reader = new FileReader();
+            reader.onload = function (e) {
+                img.onload = function() { // make sure the image is fully loaded
+                    var newdims = scaleToSquare(img, 128);
+                    img.width = newdims[0]; img.height = newdims[1];
+                    if(img.outerHTML)
+                        var outer = img.outerHTML;
+                    else
+                        var outer = $(img).outerHTML();
+                    $('#img-preview-wrapper').html(outer);
+                }
+                img.src = e.target.result;
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    $('#img-upload-button').click(function() { $('#img-upload-module').show() });
+    $('#img-upload-field').change(function() { readURL(this, '#img-preview'); });
+    $('#img-delete').click(function() {
+        $(this).hide();
+        $('#img-preview-wrapper').html('');
+        $('#img-upload-field').val('');
+    });
+
+
+});
+</script>
+
+</body>
+</html>

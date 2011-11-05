@@ -1,0 +1,68 @@
+body {
+    background: url('/static/img/paper.jpg');
+}
+
+@font-face { font-family: Delicious-Heavy; src: url('../fonts/Delicious-Heavy.otf'); } 
+@font-face { font-family: Coolvetica; src: url('../fonts/coolvetica.ttf'); } 
+
+header {
+    font-family: Delicious-Heavy, Arial, sans-serif;
+}
+
+h1#header_logo {
+    font-size: 4em;
+}
+
+h2#header_school {
+    font-size: 2.5em;
+}
+
+.greenlink a {
+    color: rgb(0, 148, 67);
+}
+
+#submitbox {
+    background-color: rgb(220, 208, 141);
+    border: 1px black solid;
+    padding: 5px;
+}
+
+#submitbox label {
+    font-family: Coolvetica, Arial, sans-serif;
+    font-size: 2em;
+    display: block;
+    margin: 0.2em;
+}
+
+#submitbox textarea {
+    display: block;
+    border-radius: 6px;
+    border-width: 2px;
+    background-color: transparent;
+    margin: 0.2em;
+    padding: 4px;
+    resize: none;
+}
+
+#img-preview-wrapper img {
+    margin: 5px;
+    display: block;
+}
+
+#submitbox input.submitbtn {
+    display: block;
+    font-family: Coolvetica, Arial, sans-serif;
+    font-size: 1.5em;
+    border-radius: 6px;
+    background-color: rgb(146, 208, 80);
+    float: right;
+}
+
+.floatright {
+    float: right;
+}
+
+.bold {
+    font-weight: bold;
+}
+
