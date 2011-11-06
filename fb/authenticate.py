@@ -1,6 +1,5 @@
 # custom Facebook authentication backend
 from django.contrib.auth.models import User
-from site_main.models import *
 from fb import facebook
 
 class FBAuthBackend:

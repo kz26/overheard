@@ -27,6 +27,11 @@ h2#header_school {
     padding: 5px;
 }
 
+#submitbox #submitbox-header {
+    font-size: 1.8em;
+    font-family: Calibri, Arial, sans-serif;
+}
+
 #submitbox label {
     font-family: Coolvetica, Arial, sans-serif;
     font-size: 2em;
@@ -58,6 +63,11 @@ h2#header_school {
     float: right;
 }
 
+#submitbox #ffa {
+    float: right;
+    margin: 5px;
+}
+
 .floatright {
     float: right;
 }
@@ -66,3 +76,76 @@ h2#header_school {
     font-weight: bold;
 }
 
+#cat-select-box {
+    background-color: rgb(165, 158, 121);
+    text-align: center;
+    border-left: 1px black solid;
+    border-right: 1px black solid;
+    padding: 5px;
+}
+
+#posts {
+    background-color: rgb(220, 204, 177);
+    border: 1px solid;
+    padding: 5px;
+} 
+
+#posts .lonely {
+    text-align: center;
+    font-size: 1.2em;
+}
+
+.post-container {
+    border-top: 1px black solid;
+}
+
+.post-title {
+    font-family: Calibri, Arial, sans-serif;
+    font-size: 1.6em;
+}
+
+.post-content {
+    font-family: Calibri, Arial, sans-serif;
+    font-size: 1.2em;
+}
+
+.posted-by {
+    font-family: Arial, Helvetica, sans-serif;
+    float: right;
+}
+
+.boldblue {
+    font-weight: bold;
+    color: rgb(79, 129, 189);
+}
+
+.post-comment {
+    border-top: 1px solid black;
+}
+
+.post-comment-date {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 0.8em;
+    color: gray;
+    text-align: right;
+}
+
+.post-comment-form textarea {
+    width: 100%;
+    resize: none;
+}
+
+footer {
+    margin-top: 1em;
+}
+
+#footer {
+    border-top: 1px black solid;
+}
+
+footer ul, footer li {
+    display: inline;
+    margin-left: 0;
+    margin-right: 5px;
+    list-style-type: none;
+}

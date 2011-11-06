@@ -1,4 +1,5 @@
 {% load static %}
+{% load url from future %}
 
 <!doctype html>
 <!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
@@ -30,6 +31,7 @@
   <link rel="stylesheet" href="{{ STATIC_URL }}css/text.css">
   <link rel="stylesheet" href="{{ STATIC_URL }}css/reset.css">
   <link rel="stylesheet" href="{{ STATIC_URL }}css/custom.css">
+  <link rel="stylesheet" href="{{ STATIC_URL }}js/libs/fancybox/jquery.fancybox-1.3.4.css">
   <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/mint-choc/jquery-ui.css">
 
   <!-- end CSS-->
@@ -59,19 +61,24 @@
         <h1 id="header_logo">OverHeardBy.Me</h1>
     </div>
     <div class="prefix_1 grid_11">
-        <h2 id="header_school" class="greenlink">@<a href="#">UChicago</a><h2>
+        <h2 id="header_school" class="greenlink">@<a href="#">{{ request.session.school.short_name }}</a><h2>
+        <div class="fb-like" data-href="http://overheardby.me" data-send="true" data-width="450" data-show-faces="true" data-font="trebuchet ms"></div>        
+    </div>
 </div>
 </header>
 
 <div id="submitbox" class="container_12">
+    <div class="grid_12">
+        <h2 id="submitbox-header">Got something to share?</h2>
+    </div>
     <form>
     <div class="grid_12">
         <div class="grid_6 alpha">
         <label>The Where</label>
-        <textarea rows="4" cols="40"></textarea>
+        <textarea rows="4" cols="40" maxlength="100"></textarea>
         </div>
         <div class="grid_6 omega">
-        <label class="floatright">The What</label>
+        <label class="floatright">The Who/The What</label>
         <textarea class="floatright" rows="4" cols="40"></textarea>
         </div>
     </div>
@@ -89,10 +96,77 @@
         </div>
         <div class="grid_6 omega">
         <input type="submit" class="submitbtn" value="Submit!" />
+        <p id="ffa">Fast. Funny. Anonymous.</p>
         </div>
     </form>
 </div>
 
+<div id="cat-select-box" class="container_12">
+    <div class="grid_12">
+        <div id="select-cat-radio">
+            <input id="latest" type="radio" name="cat" /><label for="latest">Latest</label>
+            <input id="popular" type="radio" name="cat" /><label for="popular">Most Popular</label>
+        </div>
+    </div>
+</div>
+<div id="posts" class="container_12">
+    {% if posts %}
+    {% for post in posts %}
+    <div id="post-{{ post.pk }}" class="post-container" data-postid="{{ post.pk }}"> <!-- jQuery closest -->
+        <div class="grid_12">
+            <h3 class="post-title">{{ post.location }}</h3>
+            <p class="post-content">
+            {{ post.content }}
+            </p>
+            <p class="posted-by">Posted {{ post.date }} by <span class="boldblue">{{ post.author.firstl }}</span></p>
+            <img src="{{STATIC_URL}}img/icons/thumb_up.png" title="Like this post" /> {{ post.likes.count }} <img src="{{STATIC_URL}}img/icons/comment.png" title="Comments" /> {{ post.postcomment_set.count }} <img src="{{STATIC_URL}}img/icons/exclamation.png" title="Report this post "/> 
+        </div>
+        <div class="grid_12">
+            <div class="grid_5 alpha">
+                {% if post.image %}
+                <a class="img-popup" href="{{ post.image.url }}"><img src="{{ post.image_thumb.url }}" /></a>
+                {% else %}
+                &nbsp;
+                {% endif %}
+            </div>
+            <div class="grid_7 omega">
+                {% if post.postcomment_set %}
+                {% for comment in post.postcomment_set.all %}
+                <div class="post-comment">
+                    <p><span class="boldblue">{{ comment.author.firstl }}</span> {{ comment.content }}</p>
+                    <p class="post-comment-date">{{ comment.date }}</p>
+                </div>
+                {% endfor %}
+                {% else %}
+                &nbsp;
+                {% endif %}
+                <div class="post-comment-form">
+                    <form action="{% url 'site_main.views.post_comment' post.pk %}">
+                    <textarea name="content" placeholder="What say you?"></textarea>
+                    {% csrf_token %}
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <p class="lonely">It's lonely here...why not submit something?</p>
+    {% endif %}
+</div>    
+
+<footer>
+<div class="container_12">
+    <div id="footer" class="grid_12">
+    <p>OverheardBy.Me &copy; 2011</p>
+    <ul>
+        <li>Terms of Use</li>
+        <li class="last">Contact Us</li>
+    </ul>
+    </div>
+</div>
+</footer>    
+     
   <div id="fb-root"></div>
 
   <!-- JavaScript at the bottom for fast page loading -->
@@ -101,6 +175,7 @@
   <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
   <script src="{{ STATIC_URL }}js/libs/ICanHaz.min.js"></script>
   <script src="{{ STATIC_URL }}js/libs/outerHTML-1.0.0-min.js"></script>
+  <script src="{{ STATIC_URL }}js/libs/fancybox/jquery.fancybox-1.3.4.pack.js"></script>
 
 
   <!-- scripts concatenated and minified via ant build script-->
@@ -118,9 +193,9 @@
   </script>
 
 
-  <!-- Prompt IE 6 users to install Chrome Frame. Remove this if you want to support IE 6.
+  <!-- Prompt all IE users to install Chrome Frame. Remove this if you want to support IE.
        chromium.org/developers/how-tos/chrome-frame-getting-started -->
-  <!--[if lt IE 7 ]>
+  <!--[if IE]>
     <script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
     <script>window.attachEvent('onload',function(){CFInstall.check({mode:'overlay'})})</script>
   <![endif]-->
@@ -154,6 +229,9 @@
 
 <script>
 $(document).ready(function() {
+    $('#select-cat-radio').buttonset();
+
+    $('.img-popup').fancybox();
 
     function scaleToSquare(img, maxside) {
         width = img.width;
@@ -198,6 +276,30 @@ $(document).ready(function() {
         $(this).hide();
         $('#img-preview-wrapper').html('');
         $('#img-upload-field').val('');
+    });
+
+    $('.post-comment-form form').submit(function() {
+        var myself = $(this);
+        $.ajax({
+            type: 'POST',
+            url: $(this).attr('action'),
+            data: $(this).serialize(),
+            cache: false,
+            dataType: 'json',
+            success: function(data) {
+                if(!data.success)
+                    alert("Error occurred during comment submission.");
+                else
+                    myself.remove();
+            }
+        });
+
+        return false;
+    });
+
+    $('body').delegate('.post-comment-form textarea', 'keypress', function(e) {
+        if($(this).val().replace(/\s/g, "") != "" && e.keyCode == 13)
+            $(this).closest('form').trigger('submit');
     });
 
 
