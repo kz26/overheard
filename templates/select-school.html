@@ -1,0 +1,51 @@
+<!doctype html>
+
+<head>
+<title>OverheardBy.Me</title>
+<meta name="description" content="Because people sometimes say funny things in college.">
+
+<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/pepper-grinder/jquery-ui.css">
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="{{ STATIC_URL }}js/libs/jquery-1.6.2.min.js"><\/script>')</script>
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
+
+<style type="text/css">
+#school-select-dialog {
+    text-align: center;
+}
+</style>
+<script>
+$(document).ready(function() {
+    $('#school-select-dialog').dialog({
+        title: 'Select a school',
+        modal: true,
+        draggable: false,
+        resizable: false
+    });
+
+    $('#sch-select').change(function() {
+        if($(this).val())
+            window.location = '/' + $(this).val() + '/';
+    });
+
+});
+</script>
+</head>
+<body>
+
+<div id="school-select-dialog">
+<form>
+<select id="sch-select">
+<option value"">Select a school...</option>
+<option value="uchicago">University of Chicago</option>
+<option value="uchicago">University of Chicago</option>
+<option value="uchicago">University of Chicago</option>
+<option value="uchicago">University of Chicago</option>
+<option value="uchicago">University of Chicago</option>
+</select>
+</form>
+</div>
+
+</body>
+</html>

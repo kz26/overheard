@@ -10,6 +10,9 @@ from django.core.paginator import Paginator
 from django.conf import settings
 from django_magic import funcs
 
+def select_school(request):
+    return render(request, 'select-school.html')
+
 def site_login(request):
     if 'token' in request.GET:
         u = authenticate(token=request.GET['token'])

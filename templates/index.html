@@ -18,12 +18,7 @@
   <title>OverheardBy.me</title>
   <meta name="description" content="Because people sometimes say funny things in college.">
 
-<meta property="og:title" content="OverheardBy.Me" />
-<meta property="og:type" content="website" />
-<meta property="og:url" content="http://{{ site_domain }}" />
-<meta property="og:image" content="" />
-<meta property="og:site_name" content="OverheardBy.Me" />
-<meta property="fb:admins" content="1430370192" />
+  {% include 'ogmeta.html' %}
 
   <!-- Mobile viewport optimized: j.mp/bplateviewport -->
   <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -341,10 +336,8 @@ $(document).ready(function() {
         $('.comments-box.expanded').each(function() {
             var p = $(this);
             var c = p.children('.post-comment');
-            if(c.length > 6) {
-                p.children().each(function(i, e) {
-                    $(e).hide();
-                });
+            if(c.length > 5) {
+                c.slice(0, length - 5).hide();
                 var expander = "<p class='expand'>See all comments</p>";
                 p.prepend(expander);
                 p.removeClass("expanded");

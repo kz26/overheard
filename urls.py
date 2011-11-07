@@ -9,6 +9,7 @@ admin.autodiscover()
 
 urlpatterns = patterns('',
     url(r'^$', 'site_main.views.index_view'),
+    url(r'^select-school/$', 'site_main.views.select_school'),
     url(r'^login/$', 'site_main.views.site_login'),
     url(r'^logout/$', 'site_main.views.site_logout'),
     url(r'^admin/', include(admin.site.urls)),
