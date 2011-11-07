@@ -15,9 +15,15 @@
        More info: h5bp.com/b/378 -->
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
-  <title></title>
-  <meta name="description" content="">
-  <meta name="author" content="">
+  <title>OverheardBy.me</title>
+  <meta name="description" content="Because people sometimes say funny things in college.">
+
+<meta property="og:title" content="OverheardBy.Me" />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="http://{{ site_domain }}" />
+<meta property="og:image" content="" />
+<meta property="og:site_name" content="OverheardBy.Me" />
+<meta property="fb:admins" content="1430370192" />
 
   <!-- Mobile viewport optimized: j.mp/bplateviewport -->
   <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -32,7 +38,7 @@
   <link rel="stylesheet" href="{{ STATIC_URL }}css/reset.css">
   <link rel="stylesheet" href="{{ STATIC_URL }}css/custom.css">
   <link rel="stylesheet" href="{{ STATIC_URL }}js/libs/fancybox/jquery.fancybox-1.3.4.css">
-  <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/mint-choc/jquery-ui.css">
+  <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/pepper-grinder/jquery-ui.css">
 
   <!-- end CSS-->
 
@@ -52,7 +58,7 @@
 <div class="container_12">
     <div class="prefix_8 grid_4">
     {% if user.is_authenticated %}
-        <p class="floatright">Welcome, {{ user.get_full_name }}!</p>
+        <p id="welcome">Welcome, {{ user.get_full_name }}!<br /><span id="logout" class="boldblue pointer">Log out (of Facebook)</span></p>
     {% else %}
         <div class="fb-login-button floatright"></div>
     {% endif %}
@@ -61,42 +67,46 @@
         <h1 id="header_logo">OverHeardBy.Me</h1>
     </div>
     <div class="prefix_1 grid_11">
-        <h2 id="header_school" class="greenlink">@<a href="#">{{ request.session.school.short_name }}</a><h2>
+        <h2 id="header_school" class="greenlink">@<a href="{% url 'site_main.views.render_posts' request.session.school.slug %}">{{ request.session.school.short_name }}</a></h2>
         <div class="fb-like" data-href="http://overheardby.me" data-send="true" data-width="450" data-show-faces="true" data-font="trebuchet ms"></div>        
     </div>
 </div>
 </header>
 
+{% if not single %}
 <div id="submitbox" class="container_12">
     <div class="grid_12">
         <h2 id="submitbox-header">Got something to share?</h2>
     </div>
-    <form>
+    <form id="new-post-form" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
     <div class="grid_12">
         <div class="grid_6 alpha">
         <label>The Where</label>
-        <textarea rows="4" cols="40" maxlength="100"></textarea>
+        <textarea id="id_location" name="location" rows="4" cols="40" maxlength="100">{{f.location.data|default:""}}</textarea>
         </div>
         <div class="grid_6 omega">
         <label class="floatright">The Who/The What</label>
-        <textarea class="floatright" rows="4" cols="40"></textarea>
+        <textarea id="id_content" name="content" class="floatright" rows="4" cols="40">{{f.content.data|default:""}}</textarea>
         </div>
     </div>
 
     <div class="grid_12">
     </div>
         <div class="grid_6 alpha">
-        <img id="img-upload-button" title="Upload an image" src="{{STATIC_URL}}img/icons/camera.png" />
-        <img id="img-delete" src="{{STATIC_URL}}img/icons/x.png" title="Delete upload" style="display: none;" />
-        <span id="img-upload-module" style="display: none;">
-        <p class="bold">Upload an image from your computer. (png, jpg, gif, max. 2MB)</p>
-        <input id="img-upload-field" type="file" />
-        <span id="img-preview-wrapper"></span>
-        </span>
+            <img id="img-upload-button" class="pointer" title="Upload an image" src="{{STATIC_URL}}img/icons/camera.png" />
+            <img id="img-delete" class="pointer" src="{{STATIC_URL}}img/icons/x.png" title="Delete upload" style="display: none;" />
+            <div id="img-upload-module" style="display: none;">
+                <p class="bold">Upload an image from your computer. (png, jpg, gif, max. 2MB)</p>
+                {{f.image}}
+                <span id="img-preview-wrapper"></span>
+            </div>
         </div>
         <div class="grid_6 omega">
-        <input type="submit" class="submitbtn" value="Submit!" />
-        <p id="ffa">Fast. Funny. Anonymous.</p>
+            <input id="new-post-submit" type="submit" class="submitbtn" value="Submit!" />
+            {% if f.errors %}
+            <p class="error">Whoops, something went wrong! Check your input or try again later.</p>
+            {% endif %}
         </div>
     </form>
 </div>
@@ -104,64 +114,89 @@
 <div id="cat-select-box" class="container_12">
     <div class="grid_12">
         <div id="select-cat-radio">
-            <input id="latest" type="radio" name="cat" /><label for="latest">Latest</label>
+            <input id="latest" type="radio" name="cat" checked="checked" /><label for="latest">Latest</label>
             <input id="popular" type="radio" name="cat" /><label for="popular">Most Popular</label>
         </div>
     </div>
 </div>
+{% endif %}
 <div id="posts" class="container_12">
+    <div id="posts-wrapper">
     {% if posts %}
     {% for post in posts %}
     <div id="post-{{ post.pk }}" class="post-container" data-postid="{{ post.pk }}"> <!-- jQuery closest -->
         <div class="grid_12">
             <h3 class="post-title">{{ post.location }}</h3>
+            <h4 class="post-school">{{ post.school.name }}</h4>
             <p class="post-content">
-            {{ post.content }}
+            {{ post.content|linebreaksbr }}
             </p>
-            <p class="posted-by">Posted {{ post.date }} by <span class="boldblue">{{ post.author.firstl }}</span></p>
-            <img src="{{STATIC_URL}}img/icons/thumb_up.png" title="Like this post" /> {{ post.likes.count }} <img src="{{STATIC_URL}}img/icons/comment.png" title="Comments" /> {{ post.postcomment_set.count }} <img src="{{STATIC_URL}}img/icons/exclamation.png" title="Report this post "/> 
+            <p class="posted-by">Posted {{ post.date_pretty }} by <a href="{% url 'site_main.views.render_user_posts' request.session.school.slug post.author.pk %}">{{ post.author.firstl }}</a></span></p>
+            <span class="iconbar">
+            {% if user.is_authenticated and user in post.likes %}
+                <img src="{{STATIC_URL}}img/icons/thumb_up_already.png" title="You like this post" /> 
+            {% else %}
+                <img src="{{STATIC_URL}}img/icons/thumb_up.png" title="Like this post" />
+            {% endif %} 
+            {{ post.likes.count }} 
+                <img src="{{STATIC_URL}}img/icons/comment.png" title="Comments" /> {{ post.postcomment_set.count }} 
+                <img src="{{STATIC_URL}}img/icons/exclamation.png" title="Report this post "/>
+                <span class='st_sharethis' st_url="http://{{ site_domain }}{% url 'site_main.views.render_single_post' request.session.school.slug post.pk %}" st_title="{{ post.location }}" st_summary="{{ post.content }}" {% if post.has_images %}st_image="http://{{ site_domain }}{{post.image_thumb.url}}" {% endif%} displayText='ShareThis'></span>
+            </span> 
+            {% if not hide_permalink %}
+            <p class="permalink"><a href="{% url 'site_main.views.render_single_post' request.session.school.slug post.pk %}">-permalink-</a></p>
+            {% endif %}
         </div>
         <div class="grid_12">
             <div class="grid_5 alpha">
-                {% if post.image %}
-                <a class="img-popup" href="{{ post.image.url }}"><img src="{{ post.image_thumb.url }}" /></a>
+                {% if post.has_images %}
+                <a class="img-popup" href="{{ post.image.url }}"><img class="thumbnail" src="{{ post.image_thumb.url }}" /></a>
                 {% else %}
                 &nbsp;
                 {% endif %}
             </div>
-            <div class="grid_7 omega">
+            <div class="grid_7 omega comments-box expanded">
                 {% if post.postcomment_set %}
                 {% for comment in post.postcomment_set.all %}
                 <div class="post-comment">
-                    <p><span class="boldblue">{{ comment.author.firstl }}</span> {{ comment.content }}</p>
-                    <p class="post-comment-date">{{ comment.date }}</p>
+                    <p><a href="{% url 'site_main.views.render_user_posts' request.session.school.slug comment.author.pk %}">{{ comment.author.firstl }}</a> {{ comment.content }}</p>
+                    <p class="post-comment-date">{{ comment.date_pretty }}</p>
                 </div>
                 {% endfor %}
                 {% else %}
                 &nbsp;
                 {% endif %}
+                {% if user.is_authenticated %}
                 <div class="post-comment-form">
                     <form action="{% url 'site_main.views.post_comment' post.pk %}">
                     <textarea name="content" placeholder="What say you?"></textarea>
                     {% csrf_token %}
                     </form>
                 </div>
+                {% endif %}
             </div>
         </div>
     </div>
+    <div class="clear"></div>
     {% endfor %}
+    </div>
     {% else %}
     <p class="lonely">It's lonely here...why not submit something?</p>
+    {% endif %}
+    {% if not single %}
+    <div id="more-posts" class="grid_12">
+        <input id="more-posts-btn" type="button" name="more-posts" value="Show me some more!" />
+    </div>
     {% endif %}
 </div>    
 
 <footer>
 <div class="container_12">
     <div id="footer" class="grid_12">
-    <p>OverheardBy.Me &copy; 2011</p>
+    <p>OverheardBy.Me &copy; 2011<br /></p>
     <ul>
-        <li>Terms of Use</li>
-        <li class="last">Contact Us</li>
+        <li><a href="/terms/">Terms of Use</a></li>
+        <li class="last"><a href="mailto:admin@overheardby.me">Contact Us</a></li>
     </ul>
     </div>
 </div>
@@ -176,7 +211,11 @@
   <script src="{{ STATIC_URL }}js/libs/ICanHaz.min.js"></script>
   <script src="{{ STATIC_URL }}js/libs/outerHTML-1.0.0-min.js"></script>
   <script src="{{ STATIC_URL }}js/libs/fancybox/jquery.fancybox-1.3.4.pack.js"></script>
-
+  <script>
+  var switchTo5x = true;
+  </script>
+  <script id="stscript" src="http://w.sharethis.com/button/buttons.js"></script>
+  <script type="text/javascript">stLight.options({publisher:'b175e788-d067-4d8b-9371-d7eeec3533f8', onhover: false});</script>
 
   <!-- scripts concatenated and minified via ant build script-->
   <script defer src="{{ STATIC_URL }}js/plugins.js"></script>
@@ -227,11 +266,134 @@
    }(document));
 </script>
 
+{% include 'post-comment.mustache.html' %}
+
+<script id="alert_template" type="text/html">
+<div>
+<p><span class="ui-icon-alert"></span> {% templatetag openvariable %}message{% templatetag closevariable %}</p>
+</div>
+</script>
+
 <script>
 $(document).ready(function() {
-    $('#select-cat-radio').buttonset();
+    ich.addPartial('com', ich.templates.comment_template);
+    var page = 1;
+    {% if latest %}
+    var latest = true;
+    {% else %}
+    var latest = false;
+    {% endif %}
+    if(!latest)
+        $('#popular').attr('checked', true);
 
-    $('.img-popup').fancybox();
+
+    function showAlert(t, msg) {
+        var d = ich.alert_template({message: msg});
+        $(d).dialog({ 
+            modal: true,
+            title: t,
+            draggable: false,
+            buttons: {OK: function() {
+                $(this).dialog("close"); $(this).remove(); }}
+        });
+    }
+
+    {% if not user.is_authenticated %}
+    $('#new-post-form').submit(function() {
+        showAlert("Please Login", "You need to be logged in to post.");
+        return false;
+    });
+    {% endif %}
+
+    $('#latest').click(function() {
+       window.location = '/';
+    });
+
+    $('#popular').click(function() {
+       window.location = '{% url 'site_main.views.render_posts_popular' school=request.session.school.slug %}';
+    });
+     
+    $('#select-cat-radio').buttonset();
+    $('#more-posts-btn').button();
+
+    function isBlank(s) {
+        return s.replace(/\s/g, "") == "";
+    }
+     
+    $('#new-post-form').submit(function() {
+        if(isBlank($('#id_location').val()) || isBlank($('#id_content').val()))
+            return false;
+    });
+
+    function bindFancyBox() {
+        $('.img-popup').fancybox();
+    }
+
+     $('body').delegate('.comments-box .expand', 'click', function() {
+        var me = $(this);
+        $(this).parent().children().each(function(i, e) {
+            $(e).show();
+        });
+        me.hide();
+    });
+
+    function hideComments() {
+        $('.comments-box.expanded').each(function() {
+            var p = $(this);
+            var c = p.children('.post-comment');
+            if(c.length > 6) {
+                p.children().each(function(i, e) {
+                    $(e).hide();
+                });
+                var expander = "<p class='expand'>See all comments</p>";
+                p.prepend(expander);
+                p.removeClass("expanded");
+            }
+            else if(c.length == 0 && p.children('.nocomments').length == 0)
+                p.prepend("<p class='nocomments'>No comments</p>");
+        });
+    }
+    
+    function stRefresh() {
+        stButtons.locateElements();
+    }
+
+    function setupPosts() {
+        bindFancyBox();
+        hideComments();
+        {% if not user.is_authenticated %}
+        $('.post-comment-form').remove();
+        {% endif %}
+    }
+    
+    setupPosts();
+
+    $('#more-posts-btn').click(function() {
+        var me = $(this);
+        page++;
+        if(latest)
+            var u = '{% url 'site_main.views.more_posts' 'uchicago' %}' + '?page=' + page;
+        else
+            var u = '{% url 'site_main.views.more_posts_popular' 'uchicago' %}' + '?page=' + page;
+
+        $.ajax({
+            type: 'GET',
+            url: u,
+            cache: false,
+            dataType: 'json',
+            success: function(data) {
+                if(data.length == 0)
+                    me.parent().hide();
+                for(var i=0; i < data.length; i++) {
+                    var newstuff = ich.post_template(data[i]);
+                    $('#posts-wrapper').append(newstuff);
+                }
+                setupPosts();
+                stRefresh();
+            }
+        });
+    });
+
 
     function scaleToSquare(img, maxside) {
         width = img.width;
@@ -271,14 +433,14 @@ $(document).ready(function() {
     }
 
     $('#img-upload-button').click(function() { $('#img-upload-module').show() });
-    $('#img-upload-field').change(function() { readURL(this, '#img-preview'); });
+    $('#id_image').change(function() { readURL(this, '#img-preview'); });
     $('#img-delete').click(function() {
         $(this).hide();
         $('#img-preview-wrapper').html('');
-        $('#img-upload-field').val('');
+        $('#id_image').val('');
     });
-
-    $('.post-comment-form form').submit(function() {
+    
+    $('body').delegate('.post-comment-form form', 'submit', function() {
         var myself = $(this);
         $.ajax({
             type: 'POST',
@@ -288,21 +450,31 @@ $(document).ready(function() {
             dataType: 'json',
             success: function(data) {
                 if(!data.success)
-                    alert("Error occurred during comment submission.");
+                    showAlert('Error', 'An error occurred during comment submission. Please try again later.');
                 else
+                {
+                    data.comments = data.comment;
+                    var cb =  myself.closest('.comments-box');
+                    cb.append(ich.comment_template(data));
+                    //cb.children('.post-comment').show();
+                    myself[0].reset();
                     myself.remove();
+                }
             }
         });
-
         return false;
     });
 
     $('body').delegate('.post-comment-form textarea', 'keypress', function(e) {
-        if($(this).val().replace(/\s/g, "") != "" && e.keyCode == 13)
+        if(!isBlank($(this).val()) && e.keyCode == 13)
             $(this).closest('form').trigger('submit');
     });
 
-
+    $('#logout').click(function() {
+        FB.logout(function(response) {
+            window.location = '{% url 'site_main.views.site_logout' %}';
+        });
+    });
 });
 </script>
 

@@ -17,8 +17,27 @@ h2#header_school {
     font-size: 2.5em;
 }
 
+header #welcome {
+    font-size: 1.2em;
+    text-align: right;
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+.error {
+    font-weight: bold;
+    color: red;
+}
+
 .greenlink a {
     color: rgb(0, 148, 67);
+}
+
+.permalink a {
+    color: gray;
+    text-decoration: none;
 }
 
 #submitbox {
@@ -97,11 +116,23 @@ h2#header_school {
 
 .post-container {
     border-top: 1px black solid;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.post-container img.thumbnail {
+    margin: 10px;
+    max-width: 300px;
+    max-height: 300px;
 }
 
 .post-title {
     font-family: Calibri, Arial, sans-serif;
     font-size: 1.6em;
+}
+
+.post-school {
+    color: gray;
 }
 
 .post-content {
@@ -114,6 +145,13 @@ h2#header_school {
     float: right;
 }
 
+.posted-by a, .posted-by a:visited, .post-comment a, .post-comment a:visited {
+    color: rgb(79, 129, 189);
+    font-weight: bold;
+    text-decoration: none;
+    color: rgb(79, 129, 189);
+}
+
 .boldblue {
     font-weight: bold;
     color: rgb(79, 129, 189);
@@ -121,6 +159,21 @@ h2#header_school {
 
 .post-comment {
     border-top: 1px solid black;
+}
+
+.iconbar img {
+    cursor: pointer;
+}
+
+.comments-box .expand, .comments-box .nocomments {
+    font-family: Calibri, Arial, Helvetica, sans-serif;
+    font-size: 0.8em;
+    color: gray;
+    text-align: right;
+}
+
+.comments-box .expand {
+    cursor: pointer;
 }
 
 .post-comment-date {
@@ -135,6 +188,13 @@ h2#header_school {
     resize: none;
 }
 
+#more-posts {
+    margin-top: 5px;
+    padding-top: 5px;
+    border-top: 1px black solid;
+    text-align: center;
+}
+
 footer {
     margin-top: 1em;
 }
@@ -146,6 +206,6 @@ footer {
 footer ul, footer li {
     display: inline;
     margin-left: 0;
-    margin-right: 5px;
+    margin-right: 1.5em;
     list-style-type: none;
 }

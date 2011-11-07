@@ -8,11 +8,17 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
-    url(r'^$', direct_to_template, {'template': 'index.html'}),
+    url(r'^$', 'site_main.views.index_view'),
     url(r'^login/$', 'site_main.views.site_login'),
+    url(r'^logout/$', 'site_main.views.site_logout'),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^post/(?P<postid>[0-9]+)/comment/$', 'site_main.views.post_comment'),
-    url(r'^([\w+-]+)/$', 'site_main.views.render_posts'),
+    url(r'^(?P<school>[\w+-]+)/more_posts/$', 'site_main.views.more_posts'),
+    url(r'^(?P<school>[\w+-]+)/more_posts/popular/$', 'site_main.views.more_posts_popular'),
+    url(r'^(?P<school>[\w+-]+)/$', 'site_main.views.render_posts'),
+    url(r'^(?P<school>[\w+-]+)/user/(?P<userid>[0-9]+)/$', 'site_main.views.render_user_posts'),
+    url(r'^(?P<school>[\w+-]+)/(?P<postid>[0-9]+)/$', 'site_main.views.render_single_post'),
+    url(r'^(?P<school>[\w+-]+)/popular/$', 'site_main.views.render_posts_popular'),
     # Examples:
     # url(r'^$', 'overheard.views.home', name='home'),
     # url(r'^overheard/', include('overheard.foo.urls')),

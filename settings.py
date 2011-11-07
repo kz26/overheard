@@ -103,6 +103,8 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'site_main.middleware.FBCookieAuthMiddleware',
+    'site_main.middleware.BanMiddleware',
 )
 
 ROOT_URLCONF = 'overheard.urls'
@@ -121,7 +123,7 @@ INSTALLED_APPS = (
     'django.contrib.sites',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'fb', 'site_main',
+    'fb', 'site_main', 'django_magic',
     # Uncomment the next line to enable the admin:
     'django.contrib.admin',
     # Uncomment the next line to enable admin documentation:
@@ -169,3 +171,11 @@ AUTHENTICATION_BACKENDS = (
 
 FB_APP_ID = '282771748410297'
 FB_APP_SECRET = '6e5ed6cb86d5b4b14d1d5349794d1046'
+
+POSTS_PER_PAGE = 10
+MAX_CONTENT_LENGTH = 5000
+
+FILE_UPLOAD_HANDLERS = ("django.core.files.uploadhandler.TemporaryFileUploadHandler",)
+MAX_THUMBNAIL_DIMENSION = 300
+VALID_MIME_TYPES = ('image/jpeg', 'image/png', 'image/gif',)
+
