@@ -8,7 +8,9 @@ import simplejson as json
 from cStringIO import StringIO
 from django.conf import settings
 from django.core.files.base import ContentFile
+#from django.contrib.auth.signals import *
 from imagehelper import *
+from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
 from prettydate import pretty_date
 
@@ -33,6 +35,9 @@ def gen_filename(instance, filename):
     return str(uuid1()) + splitext(filename)[1].lower()
 
 class Post(models.Model):
+    class Meta:
+        unique_together = ('school', 'location', 'content', 'author')
+
     date = models.DateTimeField(auto_now_add=True)
     school = models.ForeignKey(School)
     location = models.CharField(max_length=100)
@@ -41,6 +46,9 @@ class Post(models.Model):
     likes = models.ManyToManyField(User, related_name="post_likes", null=True, blank=True)
     image = models.ImageField(upload_to=gen_filename, null=True, blank=True)
     image_thumb = models.ImageField(upload_to=gen_filename, null=True, blank=True)
+
+    def __unicode__(self):
+        return self.location
 
     def date_pretty(self):
         return pretty_date(self.date)
@@ -51,13 +59,16 @@ class Post(models.Model):
     def save(self, *args, **kwargs):
         super(Post, self).save(*args, **kwargs)
         if self.image and not self.image_thumb:
-            tf = makeThumbnail(self.image.path) 
-            if tf:
-                self.image_thumb.save(self.image.name, ContentFile(tf.read()))
-                tf.close()
+            try:
+                tf = makeThumbnail(self.image.path) 
+                if tf:
+                    self.image_thumb.save(self.image.name, ContentFile(tf.read()))
+                    tf.close()
+            except:
+                pass
     
     @staticmethod
-    def serialize_posts_json(pqueryset):
+    def serialize_posts_json(pqueryset, logged_in=False):
         data = []
         for q in pqueryset:
             p = {}
@@ -67,10 +78,11 @@ class Post(models.Model):
             p['school'] = q.school.name
             p['content'] = q.content.replace('\n', '<br />')
             p['author'] = q.author.firstl
-            p['author_url'] = reverse('site_main.views.render_user_posts', args=[q.school.slug, q.author.pk])
+            p['author_url'] = "http://" + Site.objects.get_current().domain + reverse('site_main.views.render_user_posts', args=[q.school.slug, q.author.pk])
             p['likes'] = q.likes.count()
+            p['liked'] = logged_in and (q.author in q.likes.all())
             p['image'] = False
-            p['url'] = reverse('site_main.views.render_single_post', args=[q.school.slug, q.pk])
+            p['url'] = "http://" + Site.objects.get_current().domain + reverse('site_main.views.render_single_post', args=[q.school.slug, q.pk])
             if q.image and q.image_thumb:
                 i = {}
                 i['full'] = q.image.url
@@ -81,11 +93,13 @@ class Post(models.Model):
             for c in comments:
                 cd = {}
                 cd['author'] = c.author.firstl
+                cd['author_url'] = "http://" + Site.objects.get_current().domain + reverse('site_main.views.render_user_posts', args=[q.school.slug, c.author.pk])
                 cd['date'] = pretty_date(c.date)
                 cd['content'] = c.content
                 cl.append(cd)
             p['comment_count'] = len(cl)
             p['comments'] = cl
+            p['comment_post_url'] = reverse('site_main.views.post_comment', args=[q.pk])
             data.append(p)
         return json.dumps(data)
 

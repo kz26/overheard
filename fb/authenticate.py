@@ -4,8 +4,8 @@ from fb import facebook
 
 class FBAuthBackend:
     def authenticate(self, token=None):
+        graph = facebook.GraphAPI(token)
         try:
-            graph = facebook.GraphAPI(token)
             profile = graph.get_object("me") # will throw an exception if token is invalid
             uid = profile['id']
 

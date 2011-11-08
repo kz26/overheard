@@ -4,6 +4,6 @@ from tempfile import *
 
 def makeThumbnail(fn):
     temp = NamedTemporaryFile(delete=False)
-    args = ['convert', fn, '-resize', '%sx%s' % (settings.MAX_THUMBNAIL_DIMENSION, settings.MAX_THUMBNAIL_DIMENSION), temp.name]
+    args = ['convert', fn, '-quality', '60', '-resize', '%sx%s' % (settings.MAX_THUMBNAIL_DIMENSION, settings.MAX_THUMBNAIL_DIMENSION), temp.name]
     Popen(args).communicate()
     return temp

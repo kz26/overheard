@@ -1,0 +1,62 @@
+<script id="post_template" type="text/html">
+<div id="post-<%= this.id %>" class="post-container" data-postid="<%= this.id %>">
+    <div class="grid_12">
+        <h3 class="post-title"><%= this.location %></h3>
+        <h4 class="post-school"><%= this.school %></h4>
+        <p class="post-content">
+        <%= this.content %>
+        </p>
+        <p class="posted-by">Posted <%= this.date %> by <a href="<%= this.author_url %>"><%= this.author %></a></span></p>
+        <span class="iconbar">
+        <% if(this.liked) {%>
+            <img src="{{STATIC_URL}}img/icons/thumb_up_already.png" title="You like this post" />
+        <% } else { %>
+            <img class="like-button" src="{{STATIC_URL}}img/icons/thumb_up.png" title="Like this post" />
+        <% } %>
+        <span class="likes-count"><%= this.likes %></span>
+            <img src="{{STATIC_URL}}img/icons/comment.png" title="Comments" /><span class="comments-count"><%= this.comment_count %></span>
+            <img class="report-button" src="{{STATIC_URL}}img/icons/exclamation.png" title="Report this post "/>
+            <span class='st_sharethis' st_url="<%= this.url %>" st_title="<%= this.location %>" st_summary="<%= this.content %>" <% if(this.image) %> st_image="<%= this.image.thumb %>" displayText='ShareThis'></span>
+        </span>
+        <p class="permalink"><a href="<%= this.url %>">-permalink-</a></p>
+    </div>
+    <div class="grid_12">
+        <div class="grid_5 alpha">
+        <% if(this.image) { %>
+            <a class="img-popup" href="<%= this.image.full %>"><% ; %><img class="thumbnail" src="<%= this.image.thumb %>" <% ; %> /></a>
+        <% } else { %>
+            &nbsp;
+        <% } %>
+        </div>
+        <div class="grid_7 omega comments-box expanded">
+        <% if(this.comments.length) { %>
+            <%= $('#comment_template').jqote(this.comments) %>
+        <% } else { %>
+            &nbsp;
+        <% } %>
+            <div class="post-comment-form">
+                <form action="<%= this.comment_post_url %>">
+                    <textarea name="content" placeholder="What say you?"></textarea>
+                    {% csrf_token %}
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="clear"></div>
+</script>
+
+<script id="comment_template" type="text/html">
+            <div class="post-comment">
+                <p><a href="<%= this.author_url %>"><%= this.author %></a> <%= this.content %></p>
+                <p class="post-comment-date"><%= this.date %></p>
+            </div>
+</script>
+
+<script id="alert_template" type="text/html">
+<div>
+<p><span class="ui-icon-alert"></span>We encourage users to report posts that are illegal, harassing, threatening, or violate our Terms of Use. Would you like to report
+this message?</p>
+</div>
+</script>
+

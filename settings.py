@@ -1,4 +1,4 @@
-# Django settings for overheard project.
+# Django settings for OverheardBy.me.
 
 # clever hack to enable relative paths
 import os
@@ -98,12 +98,13 @@ TEMPLATE_LOADERS = (
 )
 
 MIDDLEWARE_CLASSES = (
+    'django.middleware.gzip.GZipMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'site_main.middleware.FBCookieAuthMiddleware',
+    #'fb.middleware.FBCookieAuthMiddleware',
     'site_main.middleware.BanMiddleware',
 )
 
@@ -160,7 +161,7 @@ TEMPLATE_CONTEXT_PROCESSORS = ("django.contrib.auth.context_processors.auth",
 "django.core.context_processors.static",
 "django.contrib.messages.context_processors.messages",
 "django.core.context_processors.request",
-"fb.context_processors.app_id",
+"fb.context_processors.facebook",
 "site_main.context_processors.current_site_domain",
 )
 
@@ -171,6 +172,7 @@ AUTHENTICATION_BACKENDS = (
 
 FB_APP_ID = '282771748410297'
 FB_APP_SECRET = '6e5ed6cb86d5b4b14d1d5349794d1046'
+FB_PERMS = ('publish_stream',)
 
 POSTS_PER_PAGE = 10
 MAX_CONTENT_LENGTH = 5000

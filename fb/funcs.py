@@ -1,9 +1,15 @@
 from django.conf import settings
+from django.contrib.sites.models import Site
+import urllib, urllib2
 from urlparse import parse_qs
 import hashlib
 import hmac
 import base64
 import simplejson as json
+
+def generate_auth_link(redirect_uri):
+    return 'https://www.facebook.com/dialog/oauth?client_id=%s&redirect_uri=%s&scope=%s' % (settings.FB_APP_ID, 'http://' + Site.objects.get_current().domain + redirect_uri, ','.join(settings.FB_PERMS))
+
 
 def get_access_token(redirect_uri, auth_code):
     qstring = (("client_id", settings.FB_APP_ID),
@@ -12,9 +18,10 @@ def get_access_token(redirect_uri, auth_code):
         ("code", auth_code))
     try:
         d = urllib2.urlopen("https://graph.facebook.com/oauth/access_token?" + urllib.urlencode(qstring))
-    except urllib2.HTTPError, e:
+        raw = parse_qs(d.read())
+        return raw['access_token'][0]
+    except:
         return None
-    return parse_qs(d.read())
 
 def check_access_token(token): # checks if the access token is valid
     qstring = {'access_token': token}

@@ -1,5 +1,5 @@
 body {
-    background: url('/static/img/paper.jpg');
+    background: url('/static/img/concrete.jpg');
 }
 
 @font-face { font-family: Delicious-Heavy; src: url('../fonts/Delicious-Heavy.otf'); } 
@@ -15,7 +15,18 @@ h1#header_logo {
 
 h2#header_school {
     font-size: 2.5em;
+    display: inline;
 }
+
+a#notschool {
+    margin-left: 0.6em;
+    vertical-align: 22%;
+    text-decoration: none;
+}
+
+a#notschool:visited {
+    color: blue;
+} 
 
 header #welcome {
     font-size: 1.2em;

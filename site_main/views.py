@@ -8,19 +8,42 @@ from forms import *
 from django.db.models import Count
 from django.core.paginator import Paginator
 from django.conf import settings
+from django.contrib.sites.models import Site
+from django.core.urlresolvers import reverse
 from django_magic import funcs
+from fb.funcs import *
+from fbhooks import *
 
 def select_school(request):
-    return render(request, 'select-school.html')
+    schools = School.objects.all().order_by('name')
+    return render(request, 'select-school.html', dictionary={'schools': schools})
+
+def index_view(request):
+    if 'school' in request.session.keys():
+        return redirect(reverse('site_main.views.render_posts', args=[request.session['school'].slug]))
+    return select_school(request)
 
 def site_login(request):
-    if 'token' in request.GET:
-        u = authenticate(token=request.GET['token'])
-        if u:
-            login(request, u)
-            request.session.set_expiry(604800)
+    if 'code' in request.GET:
+        token = get_access_token("http://" + Site.objects.get_current().domain + request.path, request.GET['code'])
+        if token:
+            u = authenticate(token=token)
+            if u:
+                login(request, u)
     return redirect('/')
-            
+   
+def fb_post_callback(request, postid):
+    if 'code' in request.GET:
+        try:
+            post_obj = Post.objects.get(pk=int(postid))
+        except:
+            return HttpResponse(status=400)
+        token = get_access_token("http://" + Site.objects.get_current().domain + request.path, request.GET['code'])
+        if token:
+            new_wall_post(token, post_obj)
+        return redirect(reverse('site_main.views.render_posts', args=[post_obj.school.slug]))
+    return HttpResponse(status=400)
+
 def render_posts(request, school, latest=True):
     try:
         school_obj = School.objects.get(slug=school)
@@ -30,15 +53,17 @@ def render_posts(request, school, latest=True):
     errors = False
     f = NewPostForm()
     if request.method == 'POST' and request.user.is_authenticated():
-         p = Post()
-         p.author = request.user
-         p.school = school_obj
-         f = NewPostForm(request.POST, request.FILES, instance=p)
-         if f.is_valid():
-             f.save()
-             return redirect('/')
-         else: errors = f.errors
-    request.session['school'] = school_obj
+        p = Post()
+        p.author = request.user
+        p.school = school_obj
+        f = NewPostForm(request.POST, request.FILES, instance=p)
+        if f.is_valid():
+            f.save()
+            p.likes.add(request.user)
+            p.save()
+            return redirect(generate_auth_link(reverse('site_main.views.fb_post_callback', args=[p.pk])))
+        else: 
+            errors = f.errors
     if latest:
         posts = Post.objects.filter(school=school_obj).order_by('-date')[:settings.POSTS_PER_PAGE]
     else:
@@ -54,7 +79,7 @@ def render_single_post(request, school, postid):
     
     post = Post.objects.filter(school=school_obj, pk=int(postid))
     if post.exists():
-        return render(request, 'index.html', dictionary={'posts': post, 'single': True, 'hide_permalink': True})
+        return render(request, 'index.html', dictionary={'posts': post, 'hideExtra': True, 'hide_permalink': True, 'own_meta': post[0]})
     else:    
         raise Http404
         
@@ -70,13 +95,10 @@ def render_user_posts(request, school, userid):
     except:
         raise Http404
     posts = Post.objects.filter(school=school_obj, author=user_obj)
-    return render(request, 'index.html', dictionary={'posts': posts, 'single': True})
+    return render(request, 'index.html', dictionary={'posts': posts, 'hideExtra': True})
 
 def render_posts_popular(request, school):
     return render_posts(request, school, latest=False)
-
-def index_view(request):
-    return render_posts(request, 'uchicago')
 
 def more_posts(request, school, latest=True):
     if request.is_ajax() and request.method == 'GET':
@@ -101,7 +123,7 @@ def more_posts(request, school, latest=True):
             resp = []
             return HttpResponse(json.dumps(resp))
         if len(posts):
-            posts_s = Post.serialize_posts_json(posts)
+            posts_s = Post.serialize_posts_json(posts, request.user.is_authenticated())
             return HttpResponse(posts_s)
         else:
             resp = []
@@ -110,6 +132,23 @@ def more_posts(request, school, latest=True):
 
 def more_posts_popular(request, school):
     return more_posts(request, school, latest=False)
+
+def like_post(request, postid):
+    if request.is_ajax() and request.method == 'GET' and request.user.is_authenticated():
+        try:
+            post = Post.objects.get(pk=int(postid))
+        except:
+            resp = {'success': False, 'error_msg': 'Invalid post ID'}
+            return HttpResponse(json.dumps(resp))
+        if request.user not in post.likes.all():
+            post.likes.add(request.user)
+            resp = {'success': True}
+            return HttpResponse(json.dumps(resp))
+        else:
+            resp = {'success': False, 'error_msg': 'You already like this post.'}
+            return HttpResponse(json.dumps(resp))
+    resp = {'success': False, 'error_msg': 'You need to be logged in to like a post.'}
+    return HttpResponse(json.dumps(resp))
 
 def post_comment(request, postid):
     if request.is_ajax() and request.method == 'POST' and request.user.is_authenticated():
@@ -126,9 +165,9 @@ def post_comment(request, postid):
             resp = {'success': True, 'comment': c.simplify()}
             return HttpResponse(json.dumps(resp))
         else:
-            resp = {'success': False, 'error_msg': f.errors}
+            resp = {'success': False, 'error_msg': 'Input is invalid.'}
             return HttpResponse(json.dumps(resp))
-    resp = {'success': False}
+    resp = {'success': False, 'error_msg': 'You need to be logged in to comment.'}
     return HttpResponse(json.dumps(resp))
 
 def site_logout(request):

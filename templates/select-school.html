@@ -18,10 +18,14 @@
 <script>
 $(document).ready(function() {
     $('#school-select-dialog').dialog({
-        title: 'Select a school',
+        title: 'OverheardBy.Me',
         modal: true,
         draggable: false,
-        resizable: false
+        resizable: false,
+        closeOnEscape: false,
+        minWidth: 480,
+        open: function(e, ui) { $(".ui-dialog-titlebar-close").hide(); }
+
     });
 
     $('#sch-select').change(function() {
@@ -35,14 +39,13 @@ $(document).ready(function() {
 <body>
 
 <div id="school-select-dialog">
+<h1>Select a school:</h1>
 <form>
 <select id="sch-select">
-<option value"">Select a school...</option>
-<option value="uchicago">University of Chicago</option>
-<option value="uchicago">University of Chicago</option>
-<option value="uchicago">University of Chicago</option>
-<option value="uchicago">University of Chicago</option>
-<option value="uchicago">University of Chicago</option>
+<option value""></option>
+{% for s in schools %}
+<option value="{{ s.slug }}">{{ s.name }}</option>
+{% endfor %}
 </select>
 </form>
 </div>

@@ -15,15 +15,29 @@
        More info: h5bp.com/b/378 -->
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
 
-  <title>OverheardBy.me</title>
-  <meta name="description" content="Because people sometimes say funny things in college.">
+  <title>OverheardBy.Me @ {{ request.session.school.name }}</title>
+  <meta name="description" content="Sometimes, people say funny things in college that are OverheardBy.Me." />
 
+  {% if own_meta %}
+  <meta property="og:title" content="{{ own_meta.location }}" />
+  <meta property="og:type" content="article" />
+  <meta property="og:url" content="http://{{ site_domain }}{{ request.path }}" />
+  {% if own_meta.has_images %}
+  <meta property="og:image" content="http://{{ site_domain }}{{ own_meta.image_thumb.url }}" />
+  {% else %}
+  <meta property="og:image" content="http://{{ site_domain }}{{ STATIC_URL }}img/icon.png" />
+  {% endif %}
+  <meta property="og:site_name" content="OverHeardBy.Me" />
+  <meta property="og:description" content="{{ own_meta.content|truncatewords:50 }}" />
+  <meta property="fb:admins" content="1430370192" />
+  {% else %}
   {% include 'ogmeta.html' %}
+  {% endif %}
 
   <!-- Mobile viewport optimized: j.mp/bplateviewport -->
   <meta name="viewport" content="width=device-width,initial-scale=1">
 
-  <!-- Place favicon.ico and apple-touch-icon.png in the root directory: mathiasbynens.be/notes/touch-icons -->
+  <link rel="shortcut icon" href="http://{{ site_domain }}{{ STATIC_URL }}img/favicon.ico" />
 
   <!-- CSS: implied media=all -->
   <!-- CSS concatenated and minified via ant build script-->
@@ -53,22 +67,25 @@
 <div class="container_12">
     <div class="prefix_8 grid_4">
     {% if user.is_authenticated %}
-        <p id="welcome">Welcome, {{ user.get_full_name }}!<br /><span id="logout" class="boldblue pointer">Log out (of Facebook)</span></p>
+        <p id="welcome">Welcome, {{ user.get_full_name }}!<br /><a href="{% url 'site_main.views.site_logout' %}">Logout</a></p>
     {% else %}
-        <div class="fb-login-button floatright"></div>
+        <a href="https://www.facebook.com/dialog/oauth?client_id={{ fb_app_id }}&redirect_uri=http://{{ site_domain }}{% url 'site_main.views.site_login' %}&scope={{ fb_perms }}"><img class="floatright" src="{{ STATIC_URL}}img/fblogin.png" alt="Login with Facebook" /></a>
     {% endif %}
     </div>
     <div class="grid_12">
         <h1 id="header_logo">OverHeardBy.Me</h1>
     </div>
     <div class="prefix_1 grid_11">
-        <h2 id="header_school" class="greenlink">@<a href="{% url 'site_main.views.render_posts' request.session.school.slug %}">{{ request.session.school.short_name }}</a></h2>
-        <div class="fb-like" data-href="http://overheardby.me" data-send="true" data-width="450" data-show-faces="true" data-font="trebuchet ms"></div>        
+        <div id="header_school_block">
+            <h2 id="header_school" class="greenlink">@<a href="{% url 'site_main.views.render_posts' request.session.school.slug %}">{{ request.session.school.short_name }}</a></h2>
+            <a id="notschool" href="{% url 'site_main.views.select_school' %}">Not your school?</a>
+        </div>
+        <div class="fb-like" data-href="http://{{ site_domain }}" data-send="true" data-width="450" data-show-faces="true" data-font="trebuchet ms"></div>        
     </div>
 </div>
 </header>
 
-{% if not single %}
+{% if not hideExtra %}
 <div id="submitbox" class="container_12">
     <div class="grid_12">
         <h2 id="submitbox-header">Got something to share?</h2>
@@ -128,14 +145,14 @@
             </p>
             <p class="posted-by">Posted {{ post.date_pretty }} by <a href="{% url 'site_main.views.render_user_posts' request.session.school.slug post.author.pk %}">{{ post.author.firstl }}</a></span></p>
             <span class="iconbar">
-            {% if user.is_authenticated and user in post.likes %}
+            {% if user.is_authenticated and user in post.likes.all %}
                 <img src="{{STATIC_URL}}img/icons/thumb_up_already.png" title="You like this post" /> 
             {% else %}
-                <img src="{{STATIC_URL}}img/icons/thumb_up.png" title="Like this post" />
+                <img class="like-button" src="{{STATIC_URL}}img/icons/thumb_up.png" title="Like this post" />
             {% endif %} 
-            {{ post.likes.count }} 
-                <img src="{{STATIC_URL}}img/icons/comment.png" title="Comments" /> {{ post.postcomment_set.count }} 
-                <img src="{{STATIC_URL}}img/icons/exclamation.png" title="Report this post "/>
+            <span class="likes-count">{{ post.likes.count }}</span>
+                <img src="{{STATIC_URL}}img/icons/comment.png" title="Comments" /><span class="comments-count">{{ post.postcomment_set.count }}</span>
+                <img class="report-button" src="{{STATIC_URL}}img/icons/exclamation.png" title="Report this post "/>
                 <span class='st_sharethis' st_url="http://{{ site_domain }}{% url 'site_main.views.render_single_post' request.session.school.slug post.pk %}" st_title="{{ post.location }}" st_summary="{{ post.content }}" {% if post.has_images %}st_image="http://{{ site_domain }}{{post.image_thumb.url}}" {% endif%} displayText='ShareThis'></span>
             </span> 
             {% if not hide_permalink %}
@@ -178,7 +195,7 @@
     {% else %}
     <p class="lonely">It's lonely here...why not submit something?</p>
     {% endif %}
-    {% if not single %}
+    {% if not hideExtra and posts %}
     <div id="more-posts" class="grid_12">
         <input id="more-posts-btn" type="button" name="more-posts" value="Show me some more!" />
     </div>
@@ -200,11 +217,36 @@
   <div id="fb-root"></div>
 
   <!-- JavaScript at the bottom for fast page loading -->
+  
+<script>
+    window.fbAsyncInit = function() {
+        FB.init({
+        appId      : '{{ fb_app_id }}', // App ID
+        channelURL : 'http://{{ site_domain }}/channel.html', // Channel File
+        status     : true, // check login status
+        cookie     : true, // enable cookies to allow the server to access the session
+        oauth      : true, // enable OAuth 2.0
+        xfbml      : true  // parse XFBML
+        });
+
+        // Additional initialization code here
+        setupFB();
+    };
+
+  // Load the SDK Asynchronously
+  (function(d){
+     var js, id = 'facebook-jssdk'; if (d.getElementById(id)) {return;}
+     js = d.createElement('script'); js.id = id; js.async = true;
+     js.src = "//connect.facebook.net/en_US/all.js";
+     d.getElementsByTagName('head')[0].appendChild(js);
+   }(document));
+</script>
+
+  
   <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
   <script>window.jQuery || document.write('<script src="{{ STATIC_URL }}js/libs/jquery-1.6.2.min.js"><\/script>')</script>
   <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
-  <script src="{{ STATIC_URL }}js/libs/ICanHaz.min.js"></script>
-  <script src="{{ STATIC_URL }}js/libs/outerHTML-1.0.0-min.js"></script>
+  <script src="{{ STATIC_URL }}js/libs/jquery.jqote2.min.js"></script>
   <script src="{{ STATIC_URL }}js/libs/fancybox/jquery.fancybox-1.3.4.pack.js"></script>
   <script>
   var switchTo5x = true;
@@ -246,10 +288,6 @@
     });
 
     // Additional initialization code here
-    FB.Event.subscribe('auth.login', function(response) {
-        var redirect_uri = '/login?token=' + response.authResponse.accessToken;
-        window.location = redirect_uri;
-    });
   };
 
   // Load the SDK Asynchronously
@@ -261,17 +299,16 @@
    }(document));
 </script>
 
-{% include 'post-comment.mustache.html' %}
+{% include 'templates.jqote2.html' %}
 
 <script id="alert_template" type="text/html">
 <div>
-<p><span class="ui-icon-alert"></span> {% templatetag openvariable %}message{% templatetag closevariable %}</p>
+<p><span class="ui-icon-alert"></span><%= this.message %></p>
 </div>
 </script>
 
 <script>
 $(document).ready(function() {
-    ich.addPartial('com', ich.templates.comment_template);
     var page = 1;
     {% if latest %}
     var latest = true;
@@ -283,11 +320,12 @@ $(document).ready(function() {
 
 
     function showAlert(t, msg) {
-        var d = ich.alert_template({message: msg});
+        var d = $('#alert_template').jqote({message: msg});
         $(d).dialog({ 
             modal: true,
             title: t,
             draggable: false,
+            resizable: false,
             buttons: {OK: function() {
                 $(this).dialog("close"); $(this).remove(); }}
         });
@@ -326,10 +364,8 @@ $(document).ready(function() {
 
      $('body').delegate('.comments-box .expand', 'click', function() {
         var me = $(this);
-        $(this).parent().children().each(function(i, e) {
-            $(e).show();
-        });
-        me.hide();
+        $(this).parent().children().show("drop", {direction: "down"});
+        me.hide("drop", {direction: "up"});
     });
 
     function hideComments() {
@@ -378,7 +414,7 @@ $(document).ready(function() {
                 if(data.length == 0)
                     me.parent().hide();
                 for(var i=0; i < data.length; i++) {
-                    var newstuff = ich.post_template(data[i]);
+                    var newstuff = $('#post_template').jqote(data[i]);
                     $('#posts-wrapper').append(newstuff);
                 }
                 setupPosts();
@@ -387,7 +423,7 @@ $(document).ready(function() {
         });
     });
 
-
+{% if user.is_authenticated %}
     function scaleToSquare(img, maxside) {
         width = img.width;
         height = img.height;
@@ -406,6 +442,8 @@ $(document).ready(function() {
                 alert("Invalid file type!");
                 return;
             }
+
+            window.URL = window.webkitURL || window.URL;
             var img = document.createElement("img");
 
             var reader = new FileReader();
@@ -413,13 +451,10 @@ $(document).ready(function() {
                 img.onload = function() { // make sure the image is fully loaded
                     var newdims = scaleToSquare(img, 128);
                     img.width = newdims[0]; img.height = newdims[1];
-                    if(img.outerHTML)
-                        var outer = img.outerHTML;
-                    else
-                        var outer = $(img).outerHTML();
-                    $('#img-preview-wrapper').html(outer);
+                    $('#img-preview-wrapper').html($(img));
+                    window.URL.revokeObjectURL(img.src);
                 }
-                img.src = e.target.result;
+                img.src = window.URL.createObjectURL(input.files[0]);;
             }
             reader.readAsDataURL(input.files[0]);
         }
@@ -432,9 +467,38 @@ $(document).ready(function() {
         $('#img-preview-wrapper').html('');
         $('#id_image').val('');
     });
-    
+   
+    $('body').delegate('.like-button', 'click', function() {
+        var me = $(this);
+        var post_id = me.closest('.post-container').attr('data-postid');
+        $.ajax({
+            type: 'GET',
+            url: '/post/' + post_id + '/like/',
+            cache: false,
+            dataType: 'json',
+            success: function(data) {
+                if(!data.hasOwnProperty('success') || !data.success)
+                    showAlert('Error', data.error_msg);
+                else {
+                    me.attr('src', '{{ STATIC_URL }}img/icons/thumb_up_already.png');
+                    me.attr('title', 'You like this post');
+                    me.removeClass('like-button');
+                    var new_like_count = parseInt(me.siblings('.likes-count').html());
+                    new_like_count++;
+                    me.siblings('.likes-count').html(new_like_count.toString());
+                }
+            }
+        });
+    });
+
+    $('body').delegate('.report-button', click, function() {
+        var post_id = me.closest('.post-container').attr('data-postid');
+    });
+         
     $('body').delegate('.post-comment-form form', 'submit', function() {
         var myself = $(this);
+        myself.attr('disabled', 'disabled');
+
         $.ajax({
             type: 'POST',
             url: $(this).attr('action'),
@@ -442,14 +506,21 @@ $(document).ready(function() {
             cache: false,
             dataType: 'json',
             success: function(data) {
-                if(!data.success)
-                    showAlert('Error', 'An error occurred during comment submission. Please try again later.');
+                if(!data.hasOwnProperty('success') || !data.success) {
+                    showAlert('Error', data.error_msg);
+                    myself.removeAttr('disabled');
+                }
                 else
                 {
                     data.comments = data.comment;
                     var cb =  myself.closest('.comments-box');
-                    cb.append(ich.comment_template(data));
+                    cb.append($('#comment_template').jqote(data.comment));
                     //cb.children('.post-comment').show();
+                    var cc = myself.closest('.post-container').children('div.grid_12').children('.iconbar').children('.comments-count');
+                    var comment_count = parseInt(cc.html());
+                    comment_count++;
+                    cc.html(comment_count);
+                    myself.closest('.comments-box').children('p.nocomments').remove();
                     myself[0].reset();
                     myself.remove();
                 }
@@ -463,11 +534,12 @@ $(document).ready(function() {
             $(this).closest('form').trigger('submit');
     });
 
-    $('#logout').click(function() {
-        FB.logout(function(response) {
-            window.location = '{% url 'site_main.views.site_logout' %}';
-        });
-    });
+    function goLogout() {
+        window.location = '{% url 'site_main.views.site_logout' %}';
+    }
+
+{% endif %}
+
 });
 </script>
 
