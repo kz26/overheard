@@ -1,0 +1,224 @@
+@font-face { font-family: Delicious-Heavy; src: url('../fonts/Delicious-Heavy.otf'); } 
+@font-face { font-family: Coolvetica; src: url('../fonts/coolvetica.ttf'); } 
+
+header {
+    font-family: Delicious-Heavy, Arial, sans-serif;
+    background: #ccc;
+}
+
+h1#header_logo {
+    font-size: 3em;
+}
+
+h1.bigh1 {
+    font-size: 2em;
+}
+
+
+h2#header_school {
+    font-size: 1.8em;
+    display: inline;
+}
+
+a#notschool {
+    margin-left: 0.6em;
+    vertical-align: 22%;
+    text-decoration: none;
+}
+
+a#notschool:visited {
+    color: blue;
+} 
+
+header #welcome {
+    font-size: 1.2em;
+    text-align: right;
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+.error {
+    font-weight: bold;
+    color: red;
+}
+
+.greenlink a {
+    color: rgb(0, 148, 67);
+}
+
+.permalink a {
+    color: gray;
+    text-decoration: none;
+}
+
+#submitbox {
+    background-color: rgb(220, 208, 141);
+    border: 1px black solid;
+    padding: 5px;
+}
+
+#submitbox #submitbox-header {
+    font-size: 1.8em;
+    font-family: Calibri, Arial, sans-serif;
+}
+
+#submitbox label {
+    font-family: Coolvetica, Arial, sans-serif;
+    font-size: 2em;
+    display: block;
+    margin: 0.2em;
+}
+
+#submitbox textarea {
+    display: block;
+    border-radius: 6px;
+    border-width: 2px;
+    background-color: transparent;
+    margin: 0.2em;
+    padding: 4px;
+    resize: none;
+}
+
+#img-preview-wrapper img {
+    margin: 5px;
+    display: block;
+}
+
+#submitbox input.submitbtn {
+    display: block;
+    font-family: Coolvetica, Arial, sans-serif;
+    font-size: 1.5em;
+    border-radius: 6px;
+    background-color: rgb(146, 208, 80);
+    float: right;
+}
+
+#submitbox #ffa {
+    float: right;
+    margin: 5px;
+}
+
+.floatright {
+    float: right;
+}
+
+.bold {
+    font-weight: bold;
+}
+
+#cat-select-box {
+    background-color: rgb(165, 158, 121);
+    text-align: center;
+    border-left: 1px black solid;
+    border-right: 1px black solid;
+    padding: 5px;
+}
+
+#posts {
+    background-color: rgb(220, 204, 177);
+    border: 1px solid;
+    padding: 5px;
+} 
+
+#posts .lonely {
+    text-align: center;
+    font-size: 1.2em;
+}
+
+.post-container {
+    border-top: 1px black solid;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.post-container img.thumbnail {
+    margin: 10px;
+    max-width: 300px;
+    max-height: 300px;
+}
+
+.post-title {
+    font-family: Calibri, Arial, sans-serif;
+    font-size: 1.6em;
+}
+
+.post-school {
+    color: gray;
+}
+
+.post-content {
+    font-family: Calibri, Arial, sans-serif;
+    font-size: 1.2em;
+}
+
+.posted-by {
+    font-family: Arial, Helvetica, sans-serif;
+    float: right;
+}
+
+.posted-by a, .posted-by a:visited, .post-comment a, .post-comment a:visited {
+    color: rgb(79, 129, 189);
+    font-weight: bold;
+    text-decoration: none;
+    color: rgb(79, 129, 189);
+}
+
+.boldblue {
+    font-weight: bold;
+    color: rgb(79, 129, 189);
+}
+
+.post-comment {
+    border-top: 1px solid black;
+}
+
+.iconbar img {
+    cursor: pointer;
+}
+
+.comments-box .expand, .comments-box .nocomments {
+    font-family: Calibri, Arial, Helvetica, sans-serif;
+    font-size: 0.8em;
+    color: gray;
+    text-align: right;
+}
+
+.comments-box .expand {
+    cursor: pointer;
+}
+
+.post-comment-date {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 0.8em;
+    color: gray;
+    text-align: right;
+}
+
+.post-comment-form textarea {
+    width: 100%;
+    resize: none;
+}
+
+#more-posts {
+    margin-top: 5px;
+    padding-top: 5px;
+    border-top: 1px black solid;
+    text-align: center;
+}
+
+footer {
+    margin-top: 1em;
+}
+
+#footer {
+    border-top: 1px black solid;
+}
+
+footer ul, footer li {
+    display: inline;
+    margin-left: 0;
+    margin-right: 1.5em;
+    list-style-type: none;
+}

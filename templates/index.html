@@ -9,9 +9,9 @@
   <meta property="og:type" content="article" />
   <meta property="og:url" content="http://{{ site_domain }}{{ request.path }}" />
   {% if own_meta.has_images %}
-  <meta property="og:image" content="http://{{ site_domain }}{{ own_meta.image_thumb.url }}" />
+  <meta property="og:image" content="{{ own_meta.image_thumb.url }}" />
   {% else %}
-  <meta property="og:image" content="http://{{ site_domain }}{{ STATIC_URL }}img/icon.png" />
+  <meta property="og:image" content="{{ STATIC_URL }}img/icon.png" />
   {% endif %}
   <meta property="og:site_name" content="OverHeardBy.Me" />
   <meta property="og:description" content="{{ own_meta.content|truncatewords:50 }}" />
@@ -90,7 +90,7 @@
             <span class="likes-count">{{ post.likes.count }}</span>
                 <img src="{{STATIC_URL}}img/icons/comment.png" title="Comments" /><span class="comments-count">{{ post.postcomment_set.count }}</span>
                 <img class="report-button" src="{{STATIC_URL}}img/icons/exclamation.png" title="Report this post "/>
-                <span class='st_sharethis' st_url="http://{{ site_domain }}{% url 'site_main.views.render_single_post' request.session.school.slug post.pk %}" st_title="{{ post.location }}" st_summary="{{ post.content }}" {% if post.has_images %}st_image="http://{{ site_domain }}{{post.image_thumb.url}}" {% endif%} displayText='ShareThis'></span>
+                <span class='st_sharethis' st_url="http://{{ site_domain }}{% url 'site_main.views.render_single_post' request.session.school.slug post.pk %}" st_title="{{ post.location }}" st_summary="{{ post.content }}" {% if post.has_images %}st_image="{{post.image_thumb.url}}" {% endif%} displayText='ShareThis'></span>
             </span> 
             {% if not hide_permalink %}
             <p class="permalink"><a href="{% url 'site_main.views.render_single_post' request.session.school.slug post.pk %}">-permalink-</a></p>
@@ -141,89 +141,7 @@
 {% endblock %}
      
 {% block scripts %}     
-  <div id="fb-root"></div>
-
-  <!-- JavaScript at the bottom for fast page loading -->
-  
-<script>
-    window.fbAsyncInit = function() {
-        FB.init({
-        appId      : '{{ fb_app_id }}', // App ID
-        channelURL : 'http://{{ site_domain }}/channel.html', // Channel File
-        status     : true, // check login status
-        cookie     : true, // enable cookies to allow the server to access the session
-        oauth      : true, // enable OAuth 2.0
-        xfbml      : true  // parse XFBML
-        });
-
-        // Additional initialization code here
-    };
-
-  // Load the SDK Asynchronously
-  (function(d){
-     var js, id = 'facebook-jssdk'; if (d.getElementById(id)) {return;}
-     js = d.createElement('script'); js.id = id; js.async = true;
-     js.src = "//connect.facebook.net/en_US/all.js";
-     d.getElementsByTagName('head')[0].appendChild(js);
-   }(document));
-</script>
-
-  
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
-  <script>window.jQuery || document.write('<script src="{{ STATIC_URL }}js/libs/jquery-1.6.2.min.js"><\/script>')</script>
-  <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
-  <script src="{{ STATIC_URL }}js/libs/jquery.jqote2.min.js"></script>
-  <script src="{{ STATIC_URL }}js/libs/fancybox/jquery.fancybox-1.3.4.pack.js"></script>
-  <script>
-  var switchTo5x = true;
-  </script>
-  <script id="stscript" src="http://w.sharethis.com/button/buttons.js"></script>
-  <script type="text/javascript">stLight.options({publisher:'b175e788-d067-4d8b-9371-d7eeec3533f8', onhover: false});</script>
-
-  <!-- scripts concatenated and minified via ant build script-->
-  <script defer src="{{ STATIC_URL }}js/plugins.js"></script>
-  <script defer src="{{ STATIC_URL }}js/script.js"></script>
-  <!-- end scripts-->
-
-	
-  <!-- Change UA-XXXXX-X to be your site's ID -->
-  <script>
-    window._gaq = [['_setAccount','UAXXXXXXXX1'],['_trackPageview'],['_trackPageLoadTime']];
-    Modernizr.load({
-      load: ('https:' == location.protocol ? '//ssl' : '//www') + '.google-analytics.com/ga.js'
-    });
-  </script>
-
-
-  <!-- Prompt all IE users to install Chrome Frame. Remove this if you want to support IE.
-       chromium.org/developers/how-tos/chrome-frame-getting-started -->
-  <!--[if IE]>
-    <script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
-    <script>window.attachEvent('onload',function(){CFInstall.check({mode:'overlay'})})</script>
-  <![endif]-->
-
-<script>
-  window.fbAsyncInit = function() {
-    FB.init({
-      appId      : '{{ fb_app_id }}', // App ID
-      channelURL : 'http://{{ site_domain }}/channel.html', // Channel File
-      status     : true, // check login status
-      cookie     : true, // enable cookies to allow the server to access the session
-      oauth      : true, // enable OAuth 2.0
-      xfbml      : true  // parse XFBML
-    });
-
-    // Additional initialization code here
-  };
-
-  // Load the SDK Asynchronously
-  (function(d){
-     var js, id = 'facebook-jssdk'; if (d.getElementById(id)) {return;}
-     js = d.createElement('script'); js.id = id; js.async = true;
-     js.src = "//connect.facebook.net/en_US/all.js";
-     d.getElementsByTagName('head')[0].appendChild(js);
-   }(document));
-</script>
+{{ block.super }}
 
 {% include 'templates.jqote2.html' %}
 

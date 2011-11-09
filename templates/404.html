@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% load url from future %}
+
+{% block title %}- Page not found {% endblock %}
+{% block header %}
+<header>
+<div class="container_12">
+    <div class="grid_8 alpha">
+    <h1 id="header_logo">OverHeardBy.Me</h1>
+    </div>
+    <div class="grid_4 omega">
+    {% if user.is_authenticated %}
+        <p id="welcome">Welcome, {{ user.get_full_name }}!<br /><a href="{% url 'site_main.views.site_logout' %}">Logout</a></p>
+    {% else %}
+        <a href="https://www.facebook.com/dialog/oauth?client_id={{ fb_app_id }}&amp;redirect_uri=http://{{ site_domain }}{% url 'site_main.views.site_login' %}&amp;scope={{ fb_perms }}"><img class="floatright" src="{{ STATIC_URL}}img/fblogin.png" title="Facebook-enabled for quick and easy access - login to post, comment, and like other people's posts!" alt="Login with Facebook" /></a>
+    {% endif %}
+    <div class="fb-like" data-href="http://{{ site_domain }}" data-send="true" data-width="310" data-show-faces="true" data-font="trebuchet ms"></div>
+    </div>
+</div>
+</header>
+
+{% endblock %}
+{% block content %}
+<div class="container_12">
+    <div class="grid_12">
+        <h1 class="bigh1">Whoops...</h1>
+        <p>Sorry, we couldn't find the page you were looking for. Maybe you 'heard' the link wrong? :D</p>
+    </div>
+</div>
+{% endblock %}

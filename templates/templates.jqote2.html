@@ -16,7 +16,7 @@
         <span class="likes-count"><%= this.likes %></span>
             <img src="{{STATIC_URL}}img/icons/comment.png" title="Comments" /><span class="comments-count"><%= this.comment_count %></span>
             <img class="report-button" src="{{STATIC_URL}}img/icons/exclamation.png" title="Report this post "/>
-            <span class='st_sharethis' st_url="<%= this.url %>" st_title="<%= this.location %>" st_summary="<%= this.content %>" <% if(this.image) %> st_image="http://{{ site_domain }}<%= this.image.thumb %>" displayText='ShareThis'></span>
+            <span class='st_sharethis' st_url="<%= this.url %>" st_title="<%= this.location %>" st_summary="<%= this.content %>" <% if(this.image) %> st_image="<%= this.image.thumb %>" displayText='ShareThis'></span>
         </span>
         <p class="permalink"><a href="<%= this.url %>">-permalink-</a></p>
     </div>

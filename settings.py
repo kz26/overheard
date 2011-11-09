@@ -177,6 +177,7 @@ FB_PERMS = ('email', 'publish_stream',)
 POSTS_PER_PAGE = 10
 MAX_CONTENT_LENGTH = 5000
 
+MAGICFILE_PATH = ''
 FILE_UPLOAD_HANDLERS = ("django.core.files.uploadhandler.TemporaryFileUploadHandler",)
 MAX_THUMBNAIL_DIMENSION = 300
 VALID_MIME_TYPES = ('image/jpeg', 'image/png', 'image/gif',)

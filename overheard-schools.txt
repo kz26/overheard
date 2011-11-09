@@ -1,0 +1,50 @@
+Harvard University	Harvard
+Princeton University	Princeton
+Yale University	Yale
+Columbia University	Columbia
+California Institute of Technology	CalTech
+Massachusetts Institute of Technology	MIT
+Stanford University	Stanford
+University of Chicago	UChicago
+University of Pennsylvania	UPenn
+Duke University	Duke
+Dartmouth College	Dartmouth
+Northwestern University	Northwestern
+Johns Hopkins University	Johns Hopkins
+Washington University in St. Louis	WashU
+Brown University	Brown
+Cornell University	Cornell
+Rice University	Rice
+Vanderbilt University	Vanderbilt
+University of Notre Dame	Notre Dame
+Emory University	Emory
+University of California Berkeley	UC Berkeley
+Georgetown University	Georgetown
+Carnegie Mellon University	Carnegie Mellon
+University of Southern California	USC
+University of California Los Angeles	UCLA
+University of Virginia	UVa
+Wake Forest University	Wake Forest
+University of Michigan Ann Arbor	UMich
+Tufts University	Tufts
+University of North Carolina Chapel Hill	UNC Chapel Hill
+Boston College	BC
+Brandeis University	Brandeis
+College of William and Mary	William and Mary
+New York University	NYU
+University of Rochester	Rochester
+Georgia Institute of Technology	Georgia Tech
+University of California San Diego	UCSD
+Case Western Reserve University	Case Western
+Lehigh University	Lehigh
+University of California Davis	UC Davis
+University of Miami	Miami
+University of California Santa Barbara	UCSB
+University of Washington	Uwashington
+University of Wisconsin - Madison	UW Madison
+Pennsylvania State University, University Park	Penn State
+University of California Irvine	UC Irvine
+University of Illinois Urbana-Champaign	U of I
+University of Texas Austin	UT Austin
+Yeshiva University	Yeshiva
+George Washington University	GWU
