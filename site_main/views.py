@@ -159,7 +159,7 @@ def report_post(request, postid):
             post = Post.objects.get(pk=int(postid))
         except:
             return HttpResponse(status=400)
-        message = render_to_string('admin-report-post.txt', {'reporter': request.user, 'post': post})
+        message = render_to_string('admin-report-post.txt', {'site_domain': Site.objects.get_current().domain, 'reporter': request.user, 'post': post})
         mail_admins("Post reported", message)
         return HttpResponse()
     return HttpResponse(status=400)
