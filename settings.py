@@ -180,4 +180,5 @@ MAX_CONTENT_LENGTH = 5000
 FILE_UPLOAD_HANDLERS = ("django.core.files.uploadhandler.TemporaryFileUploadHandler",)
 MAX_THUMBNAIL_DIMENSION = 300
 VALID_MIME_TYPES = ('image/jpeg', 'image/png', 'image/gif',)
-
+EMAIL_SUBJECT_PREFIX = '[OverheardBy.Me '
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

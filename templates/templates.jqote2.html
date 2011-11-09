@@ -6,7 +6,7 @@
         <p class="post-content">
         <%= this.content %>
         </p>
-        <p class="posted-by">Posted <%= this.date %> by <a href="<%= this.author_url %>"><%= this.author %></a></span></p>
+        <p class="posted-by">Posted <%= this.date %> by <a href="<%= this.author_url %>"><%= this.author %></a></p>
         <span class="iconbar">
         <% if(this.liked) {%>
             <img src="{{STATIC_URL}}img/icons/thumb_up_already.png" title="You like this post" />
@@ -23,7 +23,7 @@
     <div class="grid_12">
         <div class="grid_5 alpha">
         <% if(this.image) { %>
-            <a class="img-popup" href="<%= this.image.full %>"><% ; %><img class="thumbnail" src="<%= this.image.thumb %>" <% ; %> /></a>
+            <a class="img-popup" href="<%= this.image.full %>"><% ; %><img class="thumbnail" src="<%= this.image.thumb %>" <% ; %> alt="Post #<%= this.id %> thumbnail" /></a>
         <% } else { %>
             &nbsp;
         <% } %>
@@ -55,8 +55,14 @@
 
 <script id="alert_template" type="text/html">
 <div>
-<p><span class="ui-icon-alert"></span>We encourage users to report posts that are illegal, harassing, threatening, or violate our Terms of Use. Would you like to report
-this message?</p>
+<p><span class="ui-icon-alert"></span><%= this.message %></p>
 </div>
 </script>
 
+<script id="report_template" type="text/html">
+<div>
+<h2>Post #<%= this.id %></h2>
+<p><span class="ui-icon-notice"></span>We encourage users to report content that is illegal, offensive, threatening, or violates our Terms of Use. 
+<br />Would you like to report this post?</p>
+</div>
+</script>

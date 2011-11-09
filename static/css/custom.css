@@ -1,17 +1,25 @@
+/*
 body {
     background: url('/static/img/concrete.jpg');
 }
+*/
 
 @font-face { font-family: Delicious-Heavy; src: url('../fonts/Delicious-Heavy.otf'); } 
 @font-face { font-family: Coolvetica; src: url('../fonts/coolvetica.ttf'); } 
 
 header {
     font-family: Delicious-Heavy, Arial, sans-serif;
+    background: #ccc;
 }
 
 h1#header_logo {
     font-size: 4em;
 }
+
+h1.bigh1 {
+    font-size: 2em;
+}
+
 
 h2#header_school {
     font-size: 2.5em;

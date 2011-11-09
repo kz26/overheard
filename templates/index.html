@@ -1,23 +1,9 @@
+{% extends "base.html" %}
 {% load static %}
 {% load url from future %}
 
-<!doctype html>
-<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
-<!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en"> <![endif]-->
-<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en"> <![endif]-->
-<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en"> <![endif]-->
-<!-- Consider adding an manifest.appcache: h5bp.com/d/Offline -->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
-<head>
-  <meta charset="utf-8">
-
-  <!-- Use the .htaccess and remove these lines to avoid edge case issues.
-       More info: h5bp.com/b/378 -->
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-
-  <title>OverheardBy.Me @ {{ request.session.school.name }}</title>
-  <meta name="description" content="Sometimes, people say funny things in college that are OverheardBy.Me." />
-
+{% block title %}@ {{ request.session.school.name }}{% endblock %}
+{% block ogmeta %}
   {% if own_meta %}
   <meta property="og:title" content="{{ own_meta.location }}" />
   <meta property="og:type" content="article" />
@@ -31,60 +17,11 @@
   <meta property="og:description" content="{{ own_meta.content|truncatewords:50 }}" />
   <meta property="fb:admins" content="1430370192" />
   {% else %}
-  {% include 'ogmeta.html' %}
+  {{ block.super }}
   {% endif %}
+{% endblock %}
 
-  <!-- Mobile viewport optimized: j.mp/bplateviewport -->
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-
-  <link rel="shortcut icon" href="http://{{ site_domain }}{{ STATIC_URL }}img/favicon.ico" />
-
-  <!-- CSS: implied media=all -->
-  <!-- CSS concatenated and minified via ant build script-->
-  <link rel="stylesheet" href="{{ STATIC_URL }}css/style.css">
-  <link rel="stylesheet" href="{{ STATIC_URL }}css/960.css">
-  <link rel="stylesheet" href="{{ STATIC_URL }}css/text.css">
-  <link rel="stylesheet" href="{{ STATIC_URL }}css/reset.css">
-  <link rel="stylesheet" href="{{ STATIC_URL }}css/custom.css">
-  <link rel="stylesheet" href="{{ STATIC_URL }}js/libs/fancybox/jquery.fancybox-1.3.4.css">
-  <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/themes/pepper-grinder/jquery-ui.css">
-
-  <!-- end CSS-->
-
-  <!-- More ideas for your <head> here: h5bp.com/d/head-Tips -->
-
-  <!-- All JavaScript at the bottom, except for Modernizr / Respond.
-       Modernizr enables HTML5 elements & feature detects; Respond is a polyfill for min/max-width CSS3 Media Queries
-       For optimal performance, use a custom Modernizr build: www.modernizr.com/download/ -->
-   <!-- Grab Google CDN's jQuery, with a protocol relative URL; fall back to local if offline -->
-
-  <script src="{{ STATIC_URL }}js/libs/modernizr-2.0.6.min.js"></script>
-</head>
-
-<body>
-
-<header>
-<div class="container_12">
-    <div class="prefix_8 grid_4">
-    {% if user.is_authenticated %}
-        <p id="welcome">Welcome, {{ user.get_full_name }}!<br /><a href="{% url 'site_main.views.site_logout' %}">Logout</a></p>
-    {% else %}
-        <a href="https://www.facebook.com/dialog/oauth?client_id={{ fb_app_id }}&redirect_uri=http://{{ site_domain }}{% url 'site_main.views.site_login' %}&scope={{ fb_perms }}"><img class="floatright" src="{{ STATIC_URL}}img/fblogin.png" alt="Login with Facebook" /></a>
-    {% endif %}
-    </div>
-    <div class="grid_12">
-        <h1 id="header_logo">OverHeardBy.Me</h1>
-    </div>
-    <div class="prefix_1 grid_11">
-        <div id="header_school_block">
-            <h2 id="header_school" class="greenlink">@<a href="{% url 'site_main.views.render_posts' request.session.school.slug %}">{{ request.session.school.short_name }}</a></h2>
-            <a id="notschool" href="{% url 'site_main.views.select_school' %}">Not your school?</a>
-        </div>
-        <div class="fb-like" data-href="http://{{ site_domain }}" data-send="true" data-width="450" data-show-faces="true" data-font="trebuchet ms"></div>        
-    </div>
-</div>
-</header>
-
+{% block content %}
 {% if not hideExtra %}
 <div id="submitbox" class="container_12">
     <div class="grid_12">
@@ -143,7 +80,7 @@
             <p class="post-content">
             {{ post.content|linebreaksbr }}
             </p>
-            <p class="posted-by">Posted {{ post.date_pretty }} by <a href="{% url 'site_main.views.render_user_posts' request.session.school.slug post.author.pk %}">{{ post.author.firstl }}</a></span></p>
+            <p class="posted-by">Posted {{ post.date_pretty }} by <a href="{% url 'site_main.views.render_user_posts' request.session.school.slug post.author.pk %}">{{ post.author.firstl }}</a></p>
             <span class="iconbar">
             {% if user.is_authenticated and user in post.likes.all %}
                 <img src="{{STATIC_URL}}img/icons/thumb_up_already.png" title="You like this post" /> 
@@ -162,7 +99,7 @@
         <div class="grid_12">
             <div class="grid_5 alpha">
                 {% if post.has_images %}
-                <a class="img-popup" href="{{ post.image.url }}"><img class="thumbnail" src="{{ post.image_thumb.url }}" /></a>
+                <a class="img-popup" href="{{ post.image.url }}"><img class="thumbnail" src="{{ post.image_thumb.url }}" alt="Post #{{ post.pk}} thumbnail" /></a>
                 {% else %}
                 &nbsp;
                 {% endif %}
@@ -201,19 +138,9 @@
     </div>
     {% endif %}
 </div>    
-
-<footer>
-<div class="container_12">
-    <div id="footer" class="grid_12">
-    <p>OverheardBy.Me &copy; 2011<br /></p>
-    <ul>
-        <li><a href="/terms/">Terms of Use</a></li>
-        <li class="last"><a href="mailto:admin@overheardby.me">Contact Us</a></li>
-    </ul>
-    </div>
-</div>
-</footer>    
+{% endblock %}
      
+{% block scripts %}     
   <div id="fb-root"></div>
 
   <!-- JavaScript at the bottom for fast page loading -->
@@ -230,7 +157,6 @@
         });
 
         // Additional initialization code here
-        setupFB();
     };
 
   // Load the SDK Asynchronously
@@ -301,12 +227,6 @@
 
 {% include 'templates.jqote2.html' %}
 
-<script id="alert_template" type="text/html">
-<div>
-<p><span class="ui-icon-alert"></span><%= this.message %></p>
-</div>
-</script>
-
 <script>
 $(document).ready(function() {
     var page = 1;
@@ -333,7 +253,7 @@ $(document).ready(function() {
 
     {% if not user.is_authenticated %}
     $('#new-post-form').submit(function() {
-        showAlert("Please Login", "You need to be logged in to post.");
+        showAlert("Login Required", "You need to be logged in to post.");
         return false;
     });
     {% endif %}
@@ -491,8 +411,32 @@ $(document).ready(function() {
         });
     });
 
-    $('body').delegate('.report-button', click, function() {
-        var post_id = me.closest('.post-container').attr('data-postid');
+    function reportPost(pid) {
+        var m = $('#report_template').jqote({id: pid});
+        $(m).dialog({
+            modal: true,
+            draggable: false,
+            resizable: false,
+            title: 'Report Post',
+            buttons: {
+                Yes: function() {
+                    reported = true;
+                    $.get('/post/' + pid + '/report/');
+                    $(this).dialog('close');
+                    $(this).remove();
+                    showAlert('Post reported', 'Thank you. A site administrator has been notified.');
+                },
+                No: function() {
+                    $(this).dialog('close');
+                    $(this).remove();
+                }
+            }
+        });
+    }
+
+    $('body').delegate('.report-button', 'click', function() {
+        var post_id = $(this).closest('.post-container').attr('data-postid');
+        reportPost(post_id);
     });
          
     $('body').delegate('.post-comment-form form', 'submit', function() {
@@ -538,10 +482,12 @@ $(document).ready(function() {
         window.location = '{% url 'site_main.views.site_logout' %}';
     }
 
+{% else %}
+    $('body').delegate('.like-button, .report-button', 'click', function() {
+        showAlert('Login Required', 'You need to login before you can do that.');
+    });
 {% endif %}
 
 });
 </script>
-
-</body>
-</html>
+{% endblock %}

@@ -113,6 +113,8 @@ class PostComment(models.Model):
     content = models.TextField()
     date = models.DateTimeField(auto_now_add=True)
 
+    def __unicode__(self):
+        return "[%s] %s" % (self.post.location, self.author.get_full_name())
     def date_pretty(self):
         return pretty_date(self.date)
 

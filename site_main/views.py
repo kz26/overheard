@@ -13,6 +13,8 @@ from django.core.urlresolvers import reverse
 from django_magic import funcs
 from fb.funcs import *
 from fbhooks import *
+from django.core.mail import mail_admins
+from django.template.loader import render_to_string
 
 def select_school(request):
     schools = School.objects.all().order_by('name')
@@ -29,6 +31,7 @@ def site_login(request):
         if token:
             u = authenticate(token=token)
             if u:
+                UserProfile.objects.get_or_create(user=u)
                 login(request, u)
     return redirect('/')
    
@@ -149,6 +152,17 @@ def like_post(request, postid):
             return HttpResponse(json.dumps(resp))
     resp = {'success': False, 'error_msg': 'You need to be logged in to like a post.'}
     return HttpResponse(json.dumps(resp))
+
+def report_post(request, postid):
+    if request.is_ajax() and request.method == 'GET' and request.user.is_authenticated():
+        try:
+            post = Post.objects.get(pk=int(postid))
+        except:
+            return HttpResponse(status=400)
+        message = render_to_string('admin-report-post.txt', {'reporter': request.user, 'post': post})
+        mail_admins("Post reported", message)
+        return HttpResponse()
+    return HttpResponse(status=400)
 
 def post_comment(request, postid):
     if request.is_ajax() and request.method == 'POST' and request.user.is_authenticated():
