@@ -17,6 +17,7 @@ class FBAuthBackend:
             user.set_unusable_password()
             user.first_name = profile['first_name']
             user.last_name = profile['last_name'] 
+            user.email = profile['email']
             user.save()
         return user
 
