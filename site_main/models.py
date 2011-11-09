@@ -25,6 +25,8 @@ User.profile = property(lambda u: UserProfile.objects.get(user=u))
 User.firstl = property(lambda u: u.first_name + " " + u.last_name[0])
 
 class School(models.Model):
+    class Meta:
+        ordering = ['name']
     name = models.CharField(max_length=100)
     short_name = models.CharField(max_length=100)
     slug = AutoSlugField(populate_from='short_name', unique=True)

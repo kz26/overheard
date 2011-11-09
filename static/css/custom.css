@@ -1,9 +1,3 @@
-/*
-body {
-    background: url('/static/img/concrete.jpg');
-}
-*/
-
 @font-face { font-family: Delicious-Heavy; src: url('../fonts/Delicious-Heavy.otf'); } 
 @font-face { font-family: Coolvetica; src: url('../fonts/coolvetica.ttf'); } 
 
@@ -13,7 +7,7 @@ header {
 }
 
 h1#header_logo {
-    font-size: 4em;
+    font-size: 3em;
 }
 
 h1.bigh1 {
@@ -22,7 +16,7 @@ h1.bigh1 {
 
 
 h2#header_school {
-    font-size: 2.5em;
+    font-size: 1.8em;
     display: inline;
 }
 

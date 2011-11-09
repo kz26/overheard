@@ -17,7 +17,7 @@ from django.core.mail import mail_admins
 from django.template.loader import render_to_string
 
 def select_school(request):
-    schools = School.objects.all().order_by('name')
+    schools = School.objects.all()
     return render(request, 'select-school.html', dictionary={'schools': schools})
 
 def index_view(request):

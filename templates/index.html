@@ -31,11 +31,11 @@
     {% csrf_token %}
     <div class="grid_12">
         <div class="grid_6 alpha">
-        <label>The Where</label>
+        <label>Who/where?</label>
         <textarea id="id_location" name="location" rows="4" cols="40" maxlength="100">{{f.location.data|default:""}}</textarea>
         </div>
         <div class="grid_6 omega">
-        <label class="floatright">The Who/The What</label>
+        <label class="floatright">What did you (over)hear?</label>
         <textarea id="id_content" name="content" class="floatright" rows="4" cols="40">{{f.content.data|default:""}}</textarea>
         </div>
     </div>
@@ -73,7 +73,7 @@
     <div id="posts-wrapper">
     {% if posts %}
     {% for post in posts %}
-    <div id="post-{{ post.pk }}" class="post-container" data-postid="{{ post.pk }}"> <!-- jQuery closest -->
+    <div id="post-{{ post.pk }}" class="post-container" data-postid="{{ post.pk }}">
         <div class="grid_12">
             <h3 class="post-title">{{ post.location }}</h3>
             <h4 class="post-school">{{ post.school.name }}</h4>
